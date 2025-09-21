@@ -30,3 +30,68 @@ CPU options: Regular
     OpenJDK Runtime Environment (build 1.8.0_462-8u462-ga~us1-0ubuntu2~24.04.2-b08)
     OpenJDK 64-Bit Server VM (build 25.462-b08, mixed mode)
 
+2. Creating new user and adding it into the sudo group:
+
+    root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# adduser armin
+    info: Adding user `armin' ...
+    info: Selecting UID/GID from range 1000 to 59999 ...
+    info: Adding new group `armin' (1000) ...
+    info: Adding new user `armin' (1000) with group `armin (1000)' ...
+    info: Creating home directory `/home/armin' ...
+    info: Copying files from `/etc/skel' ...
+    New password: 
+    Retype new password: 
+    passwd: password updated successfully
+    Changing the user information for armin
+    Enter the new value, or press ENTER for the default
+    	Full Name []: 
+    	Room Number []: 
+    	Work Phone []: 
+    	Home Phone []: 
+    	Other []: 
+    Is the information correct? [Y/n] 
+    info: Adding new user `armin' to supplemental / extra groups `users' ...
+    info: Adding user `armin' to group `users' ...
+
+    root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# usermod -aG sudo armin 
+
+    root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# su - armin 
+    To run a command as administrator (user "root"), use "sudo <command>".
+    See "man sudo_root" for details.
+
+    armin@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~$ pwd
+    /home/armin
+
+- now I have to copy my public key to newly created user armin to have passwordles ssh connection to user armin:
+    I created /home/armin/.ssh directory and inside it has been created file called authorized_keys which contains my public key:
+
+    armin@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~$ mkdir .ssh
+    armin@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~$ sudo vim ~/.ssh/authorized_keys
+
+    Now I'll try to connect to user armin on my droplet and check if it works:
+
+    armin@nb-pf565v12:~/twn-demo-projects/Module_5$ ssh armin@46.101.121.23
+    Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-71-generic x86_64)
+    
+     * Documentation:  https://help.ubuntu.com
+     * Management:     https://landscape.canonical.com
+     * Support:        https://ubuntu.com/pro
+    
+     System information as of Sun Sep 21 16:05:07 UTC 2025
+    
+      System load:  0.0               Processes:             100
+      Usage of /:   22.9% of 8.65GB   Users logged in:       0
+      Memory usage: 39%               IPv4 address for eth0: 46.101.121.23
+      Swap usage:   0%                IPv4 address for eth0: 10.19.0.5
+    
+    Expanded Security Maintenance for Applications is not enabled.
+    
+    42 updates can be applied immediately.
+    27 of these updates are standard security updates.
+    To see these additional updates run: apt list --upgradable
+    
+    Enable ESM Apps to receive additional future security updates.
+    See https://ubuntu.com/esm or run: sudo pro status
+    
+    
+    Last login: Sun Sep 21 16:05:08 2025 from 91.65.48.166
