@@ -1,9 +1,9 @@
 # Module 5 - Cloud & Infrastructure as Service Basics #
 
-**Demo Project**
+**Demo Project**  
 Create Server and deploy application on Digital Ocean
 
-**Technologies Used**
+**Technologies Used**  
 DigitalOcean, Linux, Java, Gradle
 
 **Project Description:**
