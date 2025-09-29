@@ -7,6 +7,6 @@ Create Server and deploy application on Digital Ocean
 DigitalOcean, Linux, Java, Gradle
 
 **Project Description:**
-- Setup and configura a server on DigitalOcean
+- Setup and configure a server on DigitalOcean
 - Create and configure a new Linux user on the Droplet (Security practice)
 - Deploy and run Java Gradle application on Droplet

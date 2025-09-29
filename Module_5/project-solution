@@ -142,3 +142,5 @@ CPU options: Regular
  root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# java -jar java-react-example.jar
 
  To be able to access to the application using web browser on port 7071 I had to create new firewall rule which allows TCP connection on port 7071 for my public IP. ![alt text](image.png)
+
+ Now when I type http://46.101.121.23:7071 I can see all the Countries list.
