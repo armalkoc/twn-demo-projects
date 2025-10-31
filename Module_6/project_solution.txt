@@ -1,5 +1,6 @@
 1. I created new Droplet instance with following parameters:
-```root@ubuntu-s-1vcpu-1gb-fra1-01:~# ip -c a s
+```
+root@ubuntu-s-1vcpu-1gb-fra1-01:~# ip -c a s
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -28,4 +29,105 @@ root@ubuntu-s-1vcpu-1gb-fra1-01:~# free -h
                total        used        free      shared  buff/cache   available
 Mem:           961Mi       299Mi       195Mi       4.0Mi       617Mi       661Mi
 Swap:             0B          0B          0B
+
+root@ubuntu-s-1vcpu-1gb-fra1-01:~# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs            97M 1012K   96M   2% /run
+/dev/vda1        24G  1.9G   22G   9% /
+tmpfs           481M     0  481M   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+/dev/vda16      881M   61M  758M   8% /boot
+/dev/vda15      105M  6.2M   99M   6% /boot/efi
+tmpfs            97M   12K   97M   1% /run/user/0
+root@ubuntu-s-1vcpu-1gb-fra1-01:~# cat /etc/os-release 
+PRETTY_NAME="Ubuntu 24.04.3 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.3 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
 ```
+2. My ~/.ssh/id_ed25519.pub has been copied to ssh key during droplet creation proccess 
+
+3. I logged in into my droplet instance
+```
+armin@nb-pf565v12:~$ ssh -i /home/armin/.ssh/id_ed25519 root@164.90.209.58
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-71-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Fri Oct 31 14:41:31 UTC 2025
+
+  System load:  0.0               Processes:             98
+  Usage of /:   8.0% of 23.17GB   Users logged in:       0
+  Memory usage: 19%               IPv4 address for eth0: 164.90.209.58
+  Swap usage:   0%                IPv4 address for eth0: 10.19.0.5
+
+Expanded Security Maintenance for Applications is not enabled.
+
+72 updates can be applied immediately.
+39 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+Last login: Fri Oct 31 14:22:00 2025 from 91.65.48.166
+root@ubuntu-s-1vcpu-1gb-fra1-01:~# 
+```
+3. First of all I have to install Java to be able to start Nexus 
+```
+root@ubuntu-s-1vcpu-1gb-fra1-01:~# apt install openjdk-17-jre-headless
+root@ubuntu-s-1vcpu-1gb-fra1-01:~# java --version
+openjdk 17.0.16 2025-07-15
+OpenJDK Runtime Environment (build 17.0.16+8-Ubuntu-0ubuntu124.04.1)
+OpenJDK 64-Bit Server VM (build 17.0.16+8-Ubuntu-0ubuntu124.04.1, mixed mode, sharing)
+```
+4. After that Nexus has been installed:
+```
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# wget https://download.sonatype.com/nexus/3/nexus-3.85.0-03-linux-x86_64.tar.gz
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# tar xvzf nexus-3.85.0-03-linux-x86_64.tar.gz 
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# ls -lrth
+total 435M
+drwxr-xr-x 3 root root 4.0K Sep 26 15:15 sonatype-work
+-rw-r--r-- 1 root root 435M Oct  7 15:36 nexus-3.85.0-03-linux-x86_64.tar.gz
+drwxr-xr-x 4 root root 4.0K Oct 31 14:19 digitalocean
+drwxr-xr-x 6 root root 4.0K Oct 31 14:44 nexus-3.85.0-03
+```
+5. Create "nexus" user on our machine since Nexus shouldn't been started as root user due to security reasons:
+```
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# useradd nexus -c "user for Nexus software" -m -s /bin/bash
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# passwd nexus
+New password: 
+Retype new password: 
+passwd: password updated successfully
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# su - nexus 
+nexus@ubuntu-s-1vcpu-1gb-fra1-01:~$ 
+```
+6. Change ownership on both, /opt/nexus-3.85.0-03 and /opt/sonatype-work to nexus
+```
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# sudo chown -R nexus:nexus nexus-3.85.0-03/
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# sudo chown -R nexus:nexus sonatype-work/
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# ls -lrth
+total 435M
+drwxr-xr-x 3 nexus nexus 4.0K Sep 26 15:15 sonatype-work
+-rw-r--r-- 1 root  root  435M Oct  7 15:36 nexus-3.85.0-03-linux-x86_64.tar.gz
+drwxr-xr-x 4 root  root  4.0K Oct 31 14:19 digitalocean
+drwxr-xr-x 6 nexus nexus 4.0K Oct 31 14:44 nexus-3.85.0-03
+```
+7. Create nexus.rc to start as nexus user
+```
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt/nexus-3.85.0-03/bin# cat nexus.rc 
+run_as_user="nexus"
+```
+8.
