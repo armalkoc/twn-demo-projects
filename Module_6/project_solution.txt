@@ -1,1 +1,31 @@
-1.
+1. I created new Droplet instance with following parameters:
+```root@ubuntu-s-1vcpu-1gb-fra1-01:~# ip -c a s
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host noprefixroute 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether de:45:1f:3a:42:6d brd ff:ff:ff:ff:ff:ff
+    altname enp0s3
+    altname ens3
+    inet 164.90.209.58/20 brd 164.90.223.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet 10.19.0.5/16 brd 10.19.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::dc45:1fff:fe3a:426d/64 scope link 
+       valid_lft forever preferred_lft forever
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether be:d0:f5:0c:0c:d2 brd ff:ff:ff:ff:ff:ff
+    altname enp0s4
+    altname ens4
+    inet 10.114.0.2/20 brd 10.114.15.255 scope global eth1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::bcd0:f5ff:fe0c:cd2/64 scope link 
+       valid_lft forever preferred_lft forever
+root@ubuntu-s-1vcpu-1gb-fra1-01:~# free -h
+               total        used        free      shared  buff/cache   available
+Mem:           961Mi       299Mi       195Mi       4.0Mi       617Mi       661Mi
+Swap:             0B          0B          0B
+```
