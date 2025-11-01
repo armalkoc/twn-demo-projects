@@ -96,6 +96,13 @@ Enable ESM Apps to receive additional future security updates.
 See https://ubuntu.com/esm or run: sudo pro status
 Last login: Sun Sep 21 16:05:08 2025 from 91.65.48.166
 ```
+</details>
+
+******
+
+<details>
+<summary>Deploy and run a Java Gradle application on Droplet</summary>
+<br />
 
 **Deploy and run application artifact on Droplet**
 
@@ -156,3 +163,6 @@ To be able to access to the application using web browser on port 7071 I had to 
 Now when I type http://46.101.121.23:7071 I can see all the Countries list.
 
 </details>
+
+******
+
