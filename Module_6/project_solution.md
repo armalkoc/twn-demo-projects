@@ -211,6 +211,27 @@ gradle publish
     <version>3.1.1</version>
 </plugin>
 ```
-2. set the credentials in the ~/.m2/settings.xml
-3. do the mvn package and mvn deploy 
-4. we can see .jar artifact in the Nexus repository
+**Set credentials in the ~/.m2/settings.xml**
+```xml
+<settings>
+  <servers>
+    <server>
+      <id>nexus-snapshots</id>
+      <username>demoproject</username>
+      <password>demoprojectpass</password>
+    </server>
+  </servers>
+</settings>
+```
+**Build the .jar artifact using "mvn package" command and push it to the Nexus repository using "mvn deploy" command**
+```sh
+mvn package
+mvn deploy
+``` 
+**We can see .jar artifact in the Nexus repository**
+<br />
+![maven-app](maven-app)
+<br />
+</details>
+
+******
