@@ -148,12 +148,16 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# ps -ef | grep 2372
 nexus       2372       1 59 08:31 pts/0    00:01:44 /opt/nexus-3.85.0-03/jdk/temurin_17.0.13_11_linux_x86_64/jdk-17.0.13+11/bin/java -server -Dnexus.installer.type=linux-x86-64 -Xms2703m -Xmx2703m -XX:+UnlockDiagnosticVMOptions -XX:+LogVMOutput -XX:LogFile=../sonatype-work/nexus3/log/jvm.log -XX:-OmitStackTraceInFastThrow -Dkaraf.home=. -Dkaraf.base=. -Djava.util.logging.config.file=etc/spring/java.util.logging.properties -Dkaraf.data=../sonatype-work/nexus3 -Dkaraf.log=../sonatype-work/nexus3/log -Djava.io.tmpdir=../sonatype-work/nexus3/tmp -Djdk.tls.ephemeralDHKeySize=2048 -Dfile.encoding=UTF-8 --add-reads=java.xml=java.logging --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.naming/javax.naming.spi=ALL-UNNAMED --add-opens java.rmi/sun.rmi.transport.tcp=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.http=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.https=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.jar=ALL-UNNAMED --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED --add-exports=jdk.naming.rmi/com.sun.jndi.url.rmi=ALL-UNNAMED --add-exports=java.security.sasl/com.sun.security.sasl=ALL-UNNAMED --add-exports=java.base/sun.security.x509=ALL-UNNAMED --add-exports=java.base/sun.security.rsa=ALL-UNNAMED --add-exports=java.base/sun.security.pkcs=ALL-UNNAMED -jar /opt/nexus-3.85.0-03/bin/sonatype-nexus-repository-3.85.0-03.jar
 ```
+**Login to Nexus WEB UI with admin pass and change it**
+- At the first login we need to use admin pass from /opt/sonatype-work/nexus3/admin.password and set up our own password
+
+**Create new Role and User**
+I have created new role "demoprojectrole" for the maven-snapshots repository and also new user "demoproject" as you can see from  the picture 
+![demoprojectrole](/home/armin/twn-demo-projects/Module_6/demoprojectrole.png)
+![demoprojectuser](/home/armin/twn-demo-projects/Module_6/demoprojectuser.png)
 
 </details>
 
-10. Login to Nexus WEB UI with admin pass and change it 
-
----------------------------------------------------------
 
 1. I have created role demoprojectRole with permissions admin and view for maven-snapshot repository
 
