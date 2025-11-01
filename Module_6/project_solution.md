@@ -230,7 +230,7 @@ mvn deploy
 ``` 
 **We can see .jar artifact in the Nexus repository**
 <br />
-![maven-app](maven-app)
+![maven-app](maven-app.png)
 <br />
 </details>
 
