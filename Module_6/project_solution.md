@@ -153,8 +153,8 @@ nexus       2372       1 59 08:31 pts/0    00:01:44 /opt/nexus-3.85.0-03/jdk/tem
 
 **Create new Role and User**
 I have created new role "demoprojectrole" for the maven-snapshots repository and also new user "demoproject" as you can see from  the picture 
-![demoprojectrole](/home/armin/twn-demo-projects/Module_6/demoprojectrole.png)
-![demoprojectuser](/home/armin/twn-demo-projects/Module_6/demoprojectuser.png)
+![demoprojectrole](demoprojectrole.png)
+![demoprojectuser](demoprojectuser.png)
 
 </details>
 
