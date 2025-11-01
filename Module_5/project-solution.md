@@ -1,34 +1,42 @@
-In thise file it's gonna be explain the whole process of creating, setuping and deployng application on the droplet:
+******
+<details>
+<summary>Setup and configure a server on DigitalOcean</summary>
+<br />
 
-1. Setup and configure a server on DigitalOcean
+**Setup and configure a server on DigitalOcean**
 
 - My droplet server has following specification:
-
+```sh
 Region: Frankfurt [since Im currently located in Germany]
 Image: Ubuntu 24.04 LTS x64
 Droplet Type: Basic
 CPU options: Regular
+```
 
-- I copied my local ssh pub key in droplet server and called it am-droplet-key:
-
+**I copied my local ssh pub key in droplet server and called it am-droplet-key:**
+```sh
     armin@nb-pf565v12:~/twn-demo-projects/Module_5$ cat ~/.ssh/id_ed25519.pub 
     ssh-ed25519 <pub_key_value> armin@armin-ThinkPad
-
-- To be able to connect to my droplet server using it's public IP, I'll create firwall rule "am-ssh-rule" that allows inbound traffic on SSH port 22 
-  for public IP (checked in https://whatismyipaddress.com/) of my localhost.
-  ![alt text](image.png)
-
-  Also in the droplet network settings I applied previously created rule to my droplet ubuntu-s-1vcpu-512mb-10gb-fra1-01
-  ![alt text](image.png)
-
+```
+**To be able to connect to my droplet server using it's public IP, I'll create firwall rule "am-ssh-rule" that allows inbound traffic on SSH port 22**
+- for public IP (checked in https://whatismyipaddress.com/) of my localhost.
+- Also in the droplet network settings I applied previously created rule to my droplet ubuntu-s-1vcpu-512mb-10gb-fra1-01:
+<br />
+![firewall rule](droplet_firewall_rule.png)
+<br />
 - After firewall rule has been created and applied to my droplet server, I'll try to establish passwordless SSH connection to root user:
-![alt text](image.png)
+![ssh](ssh_passless_connection.png)
 
-- In order to be able to run java application and Nexus i the future, I'll install java version 8 on this droplet.
-    root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# java -version
-    openjdk version "1.8.0_462"
-    OpenJDK Runtime Environment (build 1.8.0_462-8u462-ga~us1-0ubuntu2~24.04.2-b08)
-    OpenJDK 64-Bit Server VM (build 25.462-b08, mixed mode)
+**In order to be able to run java application and Nexus in the future, I'll install java version 8 on this droplet:**
+```sh
+root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# java -version
+openjdk version "1.8.0_462"
+OpenJDK Runtime Environment (build 1.8.0_462-8u462-ga~us1-0ubuntu2~24.04.2-b08)
+OpenJDK 64-Bit Server VM (build 25.462-b08, mixed mode)
+```
+</details>
+
+******
 
 2. Creating new user and adding it into the sudo group:
 
