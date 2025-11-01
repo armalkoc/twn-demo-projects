@@ -1,0 +1,176 @@
+</details>
+
+******
+
+<details>
+<summary>Install and configure Nexus from scratch on a cloud server </summary>
+<br />
+
+**Create new Droplet server with following parameters***
+
+```sh 
+root@ubuntu-s-2vcpu-4gb-fra1-01:~# ip a s
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host noprefixroute 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 32:e1:a5:0b:04:a6 brd ff:ff:ff:ff:ff:ff
+    altname enp0s3
+    altname ens3
+    inet 134.122.95.105/20 brd 134.122.95.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet 10.19.0.5/16 brd 10.19.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::30e1:a5ff:fe0b:4a6/64 scope link 
+       valid_lft forever preferred_lft forever
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 12:d4:4d:9a:50:13 brd ff:ff:ff:ff:ff:ff
+    altname enp0s4
+    altname ens4
+    inet 10.114.0.2/20 brd 10.114.15.255 scope global eth1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::10d4:4dff:fe9a:5013/64 scope link 
+       valid_lft forever preferred_lft forever
+root@ubuntu-s-2vcpu-4gb-fra1-01:~# free -h
+               total        used        free      shared  buff/cache   available
+Mem:           3.8Gi       403Mi       3.0Gi       4.0Mi       644Mi       3.4Gi
+Swap:             0B          0B          0B
+root@ubuntu-s-2vcpu-4gb-fra1-01:~# cat /etc/os-release 
+PRETTY_NAME="Ubuntu 24.04.3 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.3 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+```
+</details>
+2. My ~/.ssh/id_ed25519.pub has been copied to ssh key during droplet creation proccess 
+
+3. I logged in into my droplet instance
+```
+armin@nb-pf565v12:~$ ssh -i /home/armin/.ssh/id_ed25519 root@164.90.209.58
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-71-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Fri Oct 31 14:41:31 UTC 2025
+
+  System load:  0.0               Processes:             98
+  Usage of /:   8.0% of 23.17GB   Users logged in:       0
+  Memory usage: 19%               IPv4 address for eth0: 164.90.209.58
+  Swap usage:   0%                IPv4 address for eth0: 10.19.0.5
+
+Expanded Security Maintenance for Applications is not enabled.
+
+72 updates can be applied immediately.
+39 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+Last login: Fri Oct 31 14:22:00 2025 from 91.65.48.166
+root@ubuntu-s-1vcpu-1gb-fra1-01:~# 
+```
+3. First of all I have to install Java to be able to start Nexus 
+```
+root@ubuntu-s-1vcpu-1gb-fra1-01:~# apt install openjdk-17-jre-headless
+root@ubuntu-s-1vcpu-1gb-fra1-01:~# java --version
+openjdk 17.0.16 2025-07-15
+OpenJDK Runtime Environment (build 17.0.16+8-Ubuntu-0ubuntu124.04.1)
+OpenJDK 64-Bit Server VM (build 17.0.16+8-Ubuntu-0ubuntu124.04.1, mixed mode, sharing)
+```
+4. After that Nexus has been installed:
+```
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# wget https://download.sonatype.com/nexus/3/nexus-3.85.0-03-linux-x86_64.tar.gz
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# tar xvzf nexus-3.85.0-03-linux-x86_64.tar.gz 
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# ls -lrth
+total 435M
+drwxr-xr-x 3 root root 4.0K Sep 26 15:15 sonatype-work
+-rw-r--r-- 1 root root 435M Oct  7 15:36 nexus-3.85.0-03-linux-x86_64.tar.gz
+drwxr-xr-x 4 root root 4.0K Oct 31 14:19 digitalocean
+drwxr-xr-x 6 root root 4.0K Oct 31 14:44 nexus-3.85.0-03
+```
+5. Create "nexus" user on our machine since Nexus shouldn't been started as root user due to security reasons:
+```
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# useradd nexus -c "user for Nexus software" -m -s /bin/bash
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# passwd nexus
+New password: 
+Retype new password: 
+passwd: password updated successfully
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# su - nexus 
+nexus@ubuntu-s-1vcpu-1gb-fra1-01:~$ 
+```
+6. Change ownership on both, /opt/nexus-3.85.0-03 and /opt/sonatype-work to nexus
+```
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# sudo chown -R nexus:nexus nexus-3.85.0-03/
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# sudo chown -R nexus:nexus sonatype-work/
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# ls -lrth
+total 435M
+drwxr-xr-x 3 nexus nexus 4.0K Sep 26 15:15 sonatype-work
+-rw-r--r-- 1 root  root  435M Oct  7 15:36 nexus-3.85.0-03-linux-x86_64.tar.gz
+drwxr-xr-x 4 root  root  4.0K Oct 31 14:19 digitalocean
+drwxr-xr-x 6 nexus nexus 4.0K Oct 31 14:44 nexus-3.85.0-03
+```
+7. Create nexus.rc to start as nexus user
+```
+root@ubuntu-s-1vcpu-1gb-fra1-01:/opt/nexus-3.85.0-03/bin# cat nexus.rc 
+run_as_user="nexus"
+```
+8.switch to nexus user and start necus service
+```
+nexus@ubuntu-s-2vcpu-4gb-fra1-01:/opt/nexus-3.85.0-03/bin$ ./nexus start
+Starting nexus
+nexus@ubuntu-s-2vcpu-4gb-fra1-01:/opt/nexus-3.85.0-03/bin$ ps -ef | grep nexus
+root        2110    1978  0 08:31 pts/0    00:00:00 su - nexus
+nexus       2111    2110  0 08:31 pts/0    00:00:00 -bash
+nexus       2372       1 99 08:31 pts/0    00:00:07 /opt/nexus-3.85.0-03/jdk/temurin_17.0.13_11_linux_x86_64/jdk-17.0.13+11/bin/java -server -Dnexus.installer.type=linux-x86-64 -Xms2703m -Xmx2703m -XX:+UnlockDiagnosticVMOptions -XX:+LogVMOutput -XX:LogFile=../sonatype-work/nexus3/log/jvm.log -XX:-OmitStackTraceInFastThrow -Dkaraf.home=. -Dkaraf.base=. -Djava.util.logging.config.file=etc/spring/java.util.logging.properties -Dkaraf.data=../sonatype-work/nexus3 -Dkaraf.log=../sonatype-work/nexus3/log -Djava.io.tmpdir=../sonatype-work/nexus3/tmp -Djdk.tls.ephemeralDHKeySize=2048 -Dfile.encoding=UTF-8 --add-reads=java.xml=java.logging --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.naming/javax.naming.spi=ALL-UNNAMED --add-opens java.rmi/sun.rmi.transport.tcp=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.http=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.https=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.jar=ALL-UNNAMED --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED --add-exports=jdk.naming.rmi/com.sun.jndi.url.rmi=ALL-UNNAMED --add-exports=java.security.sasl/com.sun.security.sasl=ALL-UNNAMED --add-exports=java.base/sun.security.x509=ALL-UNNAMED --add-exports=java.base/sun.security.rsa=ALL-UNNAMED --add-exports=java.base/sun.security.pkcs=ALL-UNNAMED -jar /opt/nexus-3.85.0-03/bin/sonatype-nexus-repository-3.85.0-03.jar
+```
+9. check if nexus process exists on the OS
+```
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# netstat -nltp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 127.0.0.54:53           0.0.0.0:*               LISTEN      709/systemd-resolve 
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      709/systemd-resolve 
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      1/init              
+tcp6       0      0 :::8081                 :::*                    LISTEN      2372/java           
+tcp6       0      0 :::22                   :::*                    LISTEN      1/init              
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# ps -ef | grep 2372
+nexus       2372       1 59 08:31 pts/0    00:01:44 /opt/nexus-3.85.0-03/jdk/temurin_17.0.13_11_linux_x86_64/jdk-17.0.13+11/bin/java -server -Dnexus.installer.type=linux-x86-64 -Xms2703m -Xmx2703m -XX:+UnlockDiagnosticVMOptions -XX:+LogVMOutput -XX:LogFile=../sonatype-work/nexus3/log/jvm.log -XX:-OmitStackTraceInFastThrow -Dkaraf.home=. -Dkaraf.base=. -Djava.util.logging.config.file=etc/spring/java.util.logging.properties -Dkaraf.data=../sonatype-work/nexus3 -Dkaraf.log=../sonatype-work/nexus3/log -Djava.io.tmpdir=../sonatype-work/nexus3/tmp -Djdk.tls.ephemeralDHKeySize=2048 -Dfile.encoding=UTF-8 --add-reads=java.xml=java.logging --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.naming/javax.naming.spi=ALL-UNNAMED --add-opens java.rmi/sun.rmi.transport.tcp=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.http=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.https=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.jar=ALL-UNNAMED --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED --add-exports=jdk.naming.rmi/com.sun.jndi.url.rmi=ALL-UNNAMED --add-exports=java.security.sasl/com.sun.security.sasl=ALL-UNNAMED --add-exports=java.base/sun.security.x509=ALL-UNNAMED --add-exports=java.base/sun.security.rsa=ALL-UNNAMED --add-exports=java.base/sun.security.pkcs=ALL-UNNAMED -jar /opt/nexus-3.85.0-03/bin/sonatype-nexus-repository-3.85.0-03.jar
+```
+10. Login to Nexus WEB UI with admin pass and change it 
+
+---------------------------------------------------------
+
+1. I have created role demoprojectRole with permissions admin and view for maven-snapshot repository
+
+2. User "demoproject" has also been created and above role has been assigneed to this user
+
+------------------------------------------------------------
+
+1. enable "maven-publish" plugin in the build.gradle and define Nexus repistory and enable allowInsecureProtocol since we use http
+2. store credentials in the gradle.properties 
+4. gradle build and gradle publish 
+5. we can see our .jar artifact in the nexus repository
+
+----------------------------------------------------------
+
+1. enable maven-deploy-plugin in the pom.xml file and define Nexus repository
+2. set the credentials in the ~/.m2/settings.xml
+3. do the mvn package and mvn deploy 
+4. we can see .jar artifact in the Nexus repository
+
