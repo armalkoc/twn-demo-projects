@@ -160,17 +160,42 @@ I have created new role "demoprojectrole" for the maven-snapshots repository and
 
 </details>
 
+******
 
-1. I have created role demoprojectRole with permissions admin and view for maven-snapshot repository
+<details>
+<summary>Java Gradle Project - Build Jar & Upload to Nexus</summary>
+<br />
 
-2. User "demoproject" has also been created and above role has been assigneed to this user
-
-------------------------------------------------------------
-
-1. enable "maven-publish" plugin in the build.gradle and define Nexus repistory and enable allowInsecureProtocol since we use http
-2. store credentials in the gradle.properties 
-4. gradle build and gradle publish 
-5. we can see our .jar artifact in the nexus repository
+**Enable "maven-publish" plugin in the build.gradle, define Nexus repistory and enable allowInsecureProtocol since we use http in the build.gradle file**
+```sh
+apply plugin: 'maven-publish'
+repositories {
+        maven {
+            name 'nexus'
+            url "http://134.122.95.105:8081/repository/maven-snapshots/"
+            allowInsecureProtocol = true
+            credentials {
+                username = "demoproject"
+                password = "demoproject123"
+            }
+        }
+    }
+```
+**Store credentials in the gradle.properties**
+```sh
+repoUser = something
+repoPassword = something
+```
+**Build the .jar artifact using gradle build command and publish it using gradle publish command**
+```sh
+gradle build
+gradle publish
+```
+**We can see our .jar artifact in the nexus repository**
+<br />
+![gradle-app](gradle_app.png)
+<br />
+</details>
 
 ----------------------------------------------------------
 
