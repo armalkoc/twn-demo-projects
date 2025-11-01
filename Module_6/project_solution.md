@@ -1,4 +1,3 @@
-</details>
 
 ******
 
@@ -6,8 +5,7 @@
 <summary>Install and configure Nexus from scratch on a cloud server </summary>
 <br />
 
-**Create new Droplet server with following parameters***
-
+**Create new Droplet server with following parameters**
 ```sh 
 root@ubuntu-s-2vcpu-4gb-fra1-01:~# ip a s
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
@@ -53,11 +51,9 @@ PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-poli
 UBUNTU_CODENAME=noble
 LOGO=ubuntu-logo
 ```
-</details>
-2. My ~/.ssh/id_ed25519.pub has been copied to ssh key during droplet creation proccess 
 
-3. I logged in into my droplet instance
-```
+**SSH login on our server using .pub key that is previously copied to our droplet instance**
+```sh
 armin@nb-pf565v12:~$ ssh -i /home/armin/.ssh/id_ed25519 root@164.90.209.58
 Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-71-generic x86_64)
 
@@ -85,16 +81,16 @@ See https://ubuntu.com/esm or run: sudo pro status
 Last login: Fri Oct 31 14:22:00 2025 from 91.65.48.166
 root@ubuntu-s-1vcpu-1gb-fra1-01:~# 
 ```
-3. First of all I have to install Java to be able to start Nexus 
-```
+**Install Nexus on our Droplet server**
+- Install Java that is needed to run Nexus service
+- Install Nexus
+```sh
 root@ubuntu-s-1vcpu-1gb-fra1-01:~# apt install openjdk-17-jre-headless
 root@ubuntu-s-1vcpu-1gb-fra1-01:~# java --version
 openjdk 17.0.16 2025-07-15
 OpenJDK Runtime Environment (build 17.0.16+8-Ubuntu-0ubuntu124.04.1)
 OpenJDK 64-Bit Server VM (build 17.0.16+8-Ubuntu-0ubuntu124.04.1, mixed mode, sharing)
-```
-4. After that Nexus has been installed:
-```
+
 root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# wget https://download.sonatype.com/nexus/3/nexus-3.85.0-03-linux-x86_64.tar.gz
 root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# tar xvzf nexus-3.85.0-03-linux-x86_64.tar.gz 
 root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# ls -lrth
@@ -104,8 +100,8 @@ drwxr-xr-x 3 root root 4.0K Sep 26 15:15 sonatype-work
 drwxr-xr-x 4 root root 4.0K Oct 31 14:19 digitalocean
 drwxr-xr-x 6 root root 4.0K Oct 31 14:44 nexus-3.85.0-03
 ```
-5. Create "nexus" user on our machine since Nexus shouldn't been started as root user due to security reasons:
-```
+**Create "nexus" user on our machine since any service shouldn't been started as root user due to security reasons**
+```sh
 root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# useradd nexus -c "user for Nexus software" -m -s /bin/bash
 root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# passwd nexus
 New password: 
@@ -114,8 +110,8 @@ passwd: password updated successfully
 root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# su - nexus 
 nexus@ubuntu-s-1vcpu-1gb-fra1-01:~$ 
 ```
-6. Change ownership on both, /opt/nexus-3.85.0-03 and /opt/sonatype-work to nexus
-```
+**Change ownership on both, /opt/nexus-3.85.0-03 and /opt/sonatype-work to nexus**
+```sh
 root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# sudo chown -R nexus:nexus nexus-3.85.0-03/
 root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# sudo chown -R nexus:nexus sonatype-work/
 root@ubuntu-s-1vcpu-1gb-fra1-01:/opt# ls -lrth
@@ -125,13 +121,13 @@ drwxr-xr-x 3 nexus nexus 4.0K Sep 26 15:15 sonatype-work
 drwxr-xr-x 4 root  root  4.0K Oct 31 14:19 digitalocean
 drwxr-xr-x 6 nexus nexus 4.0K Oct 31 14:44 nexus-3.85.0-03
 ```
-7. Create nexus.rc to start as nexus user
-```
+**Create nexus.rc to start as nexus user**
+```sh
 root@ubuntu-s-1vcpu-1gb-fra1-01:/opt/nexus-3.85.0-03/bin# cat nexus.rc 
 run_as_user="nexus"
 ```
-8.switch to nexus user and start necus service
-```
+**switch to nexus user and start nexus service**
+```sh
 nexus@ubuntu-s-2vcpu-4gb-fra1-01:/opt/nexus-3.85.0-03/bin$ ./nexus start
 Starting nexus
 nexus@ubuntu-s-2vcpu-4gb-fra1-01:/opt/nexus-3.85.0-03/bin$ ps -ef | grep nexus
@@ -139,8 +135,8 @@ root        2110    1978  0 08:31 pts/0    00:00:00 su - nexus
 nexus       2111    2110  0 08:31 pts/0    00:00:00 -bash
 nexus       2372       1 99 08:31 pts/0    00:00:07 /opt/nexus-3.85.0-03/jdk/temurin_17.0.13_11_linux_x86_64/jdk-17.0.13+11/bin/java -server -Dnexus.installer.type=linux-x86-64 -Xms2703m -Xmx2703m -XX:+UnlockDiagnosticVMOptions -XX:+LogVMOutput -XX:LogFile=../sonatype-work/nexus3/log/jvm.log -XX:-OmitStackTraceInFastThrow -Dkaraf.home=. -Dkaraf.base=. -Djava.util.logging.config.file=etc/spring/java.util.logging.properties -Dkaraf.data=../sonatype-work/nexus3 -Dkaraf.log=../sonatype-work/nexus3/log -Djava.io.tmpdir=../sonatype-work/nexus3/tmp -Djdk.tls.ephemeralDHKeySize=2048 -Dfile.encoding=UTF-8 --add-reads=java.xml=java.logging --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.naming/javax.naming.spi=ALL-UNNAMED --add-opens java.rmi/sun.rmi.transport.tcp=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.http=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.https=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.jar=ALL-UNNAMED --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED --add-exports=jdk.naming.rmi/com.sun.jndi.url.rmi=ALL-UNNAMED --add-exports=java.security.sasl/com.sun.security.sasl=ALL-UNNAMED --add-exports=java.base/sun.security.x509=ALL-UNNAMED --add-exports=java.base/sun.security.rsa=ALL-UNNAMED --add-exports=java.base/sun.security.pkcs=ALL-UNNAMED -jar /opt/nexus-3.85.0-03/bin/sonatype-nexus-repository-3.85.0-03.jar
 ```
-9. check if nexus process exists on the OS
-```
+**check if nexus process exists on the OS**
+```sh
 root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# netstat -nltp
 Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
@@ -152,6 +148,9 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# ps -ef | grep 2372
 nexus       2372       1 59 08:31 pts/0    00:01:44 /opt/nexus-3.85.0-03/jdk/temurin_17.0.13_11_linux_x86_64/jdk-17.0.13+11/bin/java -server -Dnexus.installer.type=linux-x86-64 -Xms2703m -Xmx2703m -XX:+UnlockDiagnosticVMOptions -XX:+LogVMOutput -XX:LogFile=../sonatype-work/nexus3/log/jvm.log -XX:-OmitStackTraceInFastThrow -Dkaraf.home=. -Dkaraf.base=. -Djava.util.logging.config.file=etc/spring/java.util.logging.properties -Dkaraf.data=../sonatype-work/nexus3 -Dkaraf.log=../sonatype-work/nexus3/log -Djava.io.tmpdir=../sonatype-work/nexus3/tmp -Djdk.tls.ephemeralDHKeySize=2048 -Dfile.encoding=UTF-8 --add-reads=java.xml=java.logging --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.naming/javax.naming.spi=ALL-UNNAMED --add-opens java.rmi/sun.rmi.transport.tcp=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.http=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.https=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.jar=ALL-UNNAMED --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED --add-exports=jdk.naming.rmi/com.sun.jndi.url.rmi=ALL-UNNAMED --add-exports=java.security.sasl/com.sun.security.sasl=ALL-UNNAMED --add-exports=java.base/sun.security.x509=ALL-UNNAMED --add-exports=java.base/sun.security.rsa=ALL-UNNAMED --add-exports=java.base/sun.security.pkcs=ALL-UNNAMED -jar /opt/nexus-3.85.0-03/bin/sonatype-nexus-repository-3.85.0-03.jar
 ```
+
+</details>
+
 10. Login to Nexus WEB UI with admin pass and change it 
 
 ---------------------------------------------------------
@@ -173,4 +172,3 @@ nexus       2372       1 59 08:31 pts/0    00:01:44 /opt/nexus-3.85.0-03/jdk/tem
 2. set the credentials in the ~/.m2/settings.xml
 3. do the mvn package and mvn deploy 
 4. we can see .jar artifact in the Nexus repository
-
