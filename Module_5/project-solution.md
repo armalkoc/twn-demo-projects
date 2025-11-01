@@ -38,117 +38,121 @@ OpenJDK 64-Bit Server VM (build 25.462-b08, mixed mode)
 
 ******
 
-2. Creating new user and adding it into the sudo group:
+<details>
+<summary>Create and configure a new Linux user on the Droplet (Security best practice)</summary>
+<br />
 
-    root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# adduser armin
-    info: Adding user `armin' ...
-    info: Selecting UID/GID from range 1000 to 59999 ...
-    info: Adding new group `armin' (1000) ...
-    info: Adding new user `armin' (1000) with group `armin (1000)' ...
-    info: Creating home directory `/home/armin' ...
-    info: Copying files from `/etc/skel' ...
-    New password: 
-    Retype new password: 
-    passwd: password updated successfully
-    Changing the user information for armin
-    Enter the new value, or press ENTER for the default
-    	Full Name []: 
-    	Room Number []: 
-    	Work Phone []: 
-    	Home Phone []: 
-    	Other []: 
-    Is the information correct? [Y/n] 
-    info: Adding new user `armin' to supplemental / extra groups `users' ...
-    info: Adding user `armin' to group `users' ...
+**Creating new user and adding it into the sudo group:**
+```sh
+root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# adduser armin
+info: Adding user `armin' ...
+info: Selecting UID/GID from range 1000 to 59999 ...
+info: Adding new group `armin' (1000) ...
+info: Adding new user `armin' (1000) with group `armin (1000)' ...
+info: Creating home directory `/home/armin' ...
+info: Copying files from `/etc/skel' ...
+New password: 
+Retype new password: 
+passwd: password updated successfully
+Changing the user information for armin
+Enter the new value, or press ENTER for the default
+	Full Name []: 
+	Room Number []: 
+	Work Phone []: 
+	Home Phone []: 
+	Other []: 
+Is the information correct? [Y/n] 
+info: Adding new user `armin' to supplemental / extra groups `users' ...
+info: Adding user `armin' to group `users' ...
+root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# usermod -aG sudo armin 
+root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# su - armin 
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+armin@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~$ pwd
+/home/armin
+```
 
-    root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# usermod -aG sudo armin 
+**I have to copy my public key to newly created user armin to have passwordles ssh connection to user armin**
+I created /home/armin/.ssh directory and inside it has been created file called authorized_keys which contains my public key:
+```sh
+armin@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~$ mkdir .ssh
+armin@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~$ sudo vim ~/.ssh/authorized_keys
+Now I'll try to connect to user armin on my droplet and check if it works:
+armin@nb-pf565v12:~/twn-demo-projects/Module_5$ ssh armin@46.101.121.23
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-71-generic x86_64)
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+ System information as of Sun Sep 21 16:05:07 UTC 2025
+  System load:  0.0               Processes:             100
+  Usage of /:   22.9% of 8.65GB   Users logged in:       0
+  Memory usage: 39%               IPv4 address for eth0: 46.101.121.23
+  Swap usage:   0%                IPv4 address for eth0: 10.19.0.5
+Expanded Security Maintenance for Applications is not enabled.
+42 updates can be applied immediately.
+27 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+Last login: Sun Sep 21 16:05:08 2025 from 91.65.48.166
+```
 
-    root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# su - armin 
-    To run a command as administrator (user "root"), use "sudo <command>".
-    See "man sudo_root" for details.
+**Deploy and run application artifact on Droplet**
 
-    armin@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~$ pwd
-    /home/armin
+First what I did I cloned java-react-example project  https://gitlab.com/twn-devops-bootcamp/latest/05-cloud/java-react-example localy into my computer:
+```sh
+armin@devops-bootcamp ~/demo_projects/module_5 
+% git clone git@gitlab.com:twn-devops-bootcamp/latest/05-cloud/java-react-example.git
+Cloning into 'java-react-example'...
+remote: Enumerating objects: 136, done.
+remote: Counting objects: 100% (3/3), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 136 (delta 0), reused 0 (delta 0), pack-reused 133 (from 1)
+Receiving objects: 100% (136/136), 145.05 KiB | 1.25 MiB/s, done.
+Resolving deltas: 100% (24/24), done.
+```
+Then I build application artifact file using gradle command:
+```sh
+% gradle build
+[Incubating] Problems report is available at: file:///home/armin/demo_projects/module_5/java-react-example/build/reports/problems/problems-report.html
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+For more on this, please refer to https://docs.gradle.org/8.12/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+BUILD SUCCESSFUL in 15s
+7 actionable tasks: 7 executed
+```
 
-- now I have to copy my public key to newly created user armin to have passwordles ssh connection to user armin:
-    I created /home/armin/.ssh directory and inside it has been created file called authorized_keys which contains my public key:
+We can see artifact file in the libs directory:
+![artifact](java-react-example-artifact.png)
+<br />
 
-    armin@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~$ mkdir .ssh
-    armin@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~$ sudo vim ~/.ssh/authorized_keys
+I copied artifact jar file using rsync since scp was finishing i stallen status:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_5/java-react-example$ rsync -avP java-react-example.jar root@46.101.121.23:/root/
+sending incremental file list
+java-react-example.jar
+     17.923.596 100%  150,99kB/s    0:01:55 (xfr#1, to-chk=0/1)
 
-    Now I'll try to connect to user armin on my droplet and check if it works:
+sent 17.928.084 bytes  received 35 bytes  139.518,44 bytes/sec
+total size is 17.923.596  speedup is 1,00
+```
+After that I started application:
+<br />
 
-    armin@nb-pf565v12:~/twn-demo-projects/Module_5$ ssh armin@46.101.121.23
-    Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-71-generic x86_64)
+```sh
+root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# java -jar java-react-example.jar
+```
+<br />
 
-     * Documentation:  https://help.ubuntu.com
-     * Management:     https://landscape.canonical.com
-     * Support:        https://ubuntu.com/pro
+![application](java_app_started.png)
 
-     System information as of Sun Sep 21 16:05:07 UTC 2025
+To be able to access to the application using web browser on port 7071 I had to create new firewall rule which allows TCP connection on port 7071 for my public IP.
+<br />
 
-      System load:  0.0               Processes:             100
-      Usage of /:   22.9% of 8.65GB   Users logged in:       0
-      Memory usage: 39%               IPv4 address for eth0: 46.101.121.23
-      Swap usage:   0%                IPv4 address for eth0: 10.19.0.5
-
-    Expanded Security Maintenance for Applications is not enabled.
-
-    42 updates can be applied immediately.
-    27 of these updates are standard security updates.
-    To see these additional updates run: apt list --upgradable
-
-    Enable ESM Apps to receive additional future security updates.
-    See https://ubuntu.com/esm or run: sudo pro status
+![port](app_web_firwall_rule.png)
+<br />
 
 
-    Last login: Sun Sep 21 16:05:08 2025 from 91.65.48.166
+Now when I type http://46.101.121.23:7071 I can see all the Countries list.
 
-3. Deploy and run application artifact on Droplet
-
-- First what I did I cloned java-react-example project  https://gitlab.com/twn-devops-bootcamp/latest/05-cloud/java-react-example localy into my computer:
-
-    armin@devops-bootcamp ~/demo_projects/module_5 
-    % git clone git@gitlab.com:twn-devops-bootcamp/latest/05-cloud/java-react-example.git
-    Cloning into 'java-react-example'...
-    remote: Enumerating objects: 136, done.
-    remote: Counting objects: 100% (3/3), done.
-    remote: Compressing objects: 100% (3/3), done.
-    remote: Total 136 (delta 0), reused 0 (delta 0), pack-reused 133 (from 1)
-    Receiving objects: 100% (136/136), 145.05 KiB | 1.25 MiB/s, done.
-    Resolving deltas: 100% (24/24), done.
-
- Then I build application artifact file using gradle command:
-
-    % gradle build
-
-    [Incubating] Problems report is available at: file:///home/armin/demo_projects/module_5/java-react-example/build/reports/problems/problems-report.html
-
-    Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
-
-    You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
-
-    For more on this, please refer to https://docs.gradle.org/8.12/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
-
-    BUILD SUCCESSFUL in 15s
-    7 actionable tasks: 7 executed
-
- We can see artifact file in the libs directory ![alt text](image.png)
-
- I copied artifact jar file using rsync since scp was finishing i stallen status:
-
-    armin@nb-pf565v12:~/twn-demo-projects/Module_5/java-react-example$ rsync -avP java-react-example.jar root@46.101.121.23:/root/
-    sending incremental file list
-    java-react-example.jar
-         17.923.596 100%  150,99kB/s    0:01:55 (xfr#1, to-chk=0/1)
-    
-    sent 17.928.084 bytes  received 35 bytes  139.518,44 bytes/sec
-    total size is 17.923.596  speedup is 1,00
- 
- After that I started application ![:](image.png):
-
- root@ubuntu-s-1vcpu-512mb-10gb-fra1-01:~# java -jar java-react-example.jar
-
- To be able to access to the application using web browser on port 7071 I had to create new firewall rule which allows TCP connection on port 7071 for my public IP. ![alt text](image.png)
-
- Now when I type http://46.101.121.23:7071 I can see all the Countries list.
+</details>
