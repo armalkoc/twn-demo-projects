@@ -152,9 +152,11 @@ nexus       2372       1 59 08:31 pts/0    00:01:44 /opt/nexus-3.85.0-03/jdk/tem
 - At the first login we need to use admin pass from /opt/sonatype-work/nexus3/admin.password and set up our own password
 
 **Create new Role and User**
-I have created new role "demoprojectrole" for the maven-snapshots repository and also new user "demoproject" as you can see from  the picture 
+I have created new role "demoprojectrole" for the maven-snapshots repository and also new user "demoproject" as you can see from  the pictures below:
+
 <br />
 ![demoprojectrole](demoprojectrole.png)
+
 <br />
 ![demoprojectuser](demoprojectuser.png)
 
