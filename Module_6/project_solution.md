@@ -156,7 +156,6 @@ I have created new role "demoprojectrole" for the maven-snapshots repository and
 
 <br />
 ![demoprojectrole](demoprojectrole.png)
-
 <br />
 ![demoprojectuser](demoprojectuser.png)
 
