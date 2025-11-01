@@ -123,13 +123,13 @@ drwxr-xr-x 3 nexus nexus 4.0K Sep 26 15:15 sonatype-work
 drwxr-xr-x 4 root  root  4.0K Oct 31 14:19 digitalocean
 drwxr-xr-x 6 nexus nexus 4.0K Oct 31 14:44 nexus-3.85.0-03
 ```
-7. Create nexus.rc to start as nexus user
-```
+**Create nexus.rc to start as nexus user**
+```sh
 root@ubuntu-s-1vcpu-1gb-fra1-01:/opt/nexus-3.85.0-03/bin# cat nexus.rc 
 run_as_user="nexus"
 ```
-8.switch to nexus user and start necus service
-```
+**switch to nexus user and start nexus service**
+```sh
 nexus@ubuntu-s-2vcpu-4gb-fra1-01:/opt/nexus-3.85.0-03/bin$ ./nexus start
 Starting nexus
 nexus@ubuntu-s-2vcpu-4gb-fra1-01:/opt/nexus-3.85.0-03/bin$ ps -ef | grep nexus
@@ -137,8 +137,8 @@ root        2110    1978  0 08:31 pts/0    00:00:00 su - nexus
 nexus       2111    2110  0 08:31 pts/0    00:00:00 -bash
 nexus       2372       1 99 08:31 pts/0    00:00:07 /opt/nexus-3.85.0-03/jdk/temurin_17.0.13_11_linux_x86_64/jdk-17.0.13+11/bin/java -server -Dnexus.installer.type=linux-x86-64 -Xms2703m -Xmx2703m -XX:+UnlockDiagnosticVMOptions -XX:+LogVMOutput -XX:LogFile=../sonatype-work/nexus3/log/jvm.log -XX:-OmitStackTraceInFastThrow -Dkaraf.home=. -Dkaraf.base=. -Djava.util.logging.config.file=etc/spring/java.util.logging.properties -Dkaraf.data=../sonatype-work/nexus3 -Dkaraf.log=../sonatype-work/nexus3/log -Djava.io.tmpdir=../sonatype-work/nexus3/tmp -Djdk.tls.ephemeralDHKeySize=2048 -Dfile.encoding=UTF-8 --add-reads=java.xml=java.logging --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.naming/javax.naming.spi=ALL-UNNAMED --add-opens java.rmi/sun.rmi.transport.tcp=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.http=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.https=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.jar=ALL-UNNAMED --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED --add-exports=jdk.naming.rmi/com.sun.jndi.url.rmi=ALL-UNNAMED --add-exports=java.security.sasl/com.sun.security.sasl=ALL-UNNAMED --add-exports=java.base/sun.security.x509=ALL-UNNAMED --add-exports=java.base/sun.security.rsa=ALL-UNNAMED --add-exports=java.base/sun.security.pkcs=ALL-UNNAMED -jar /opt/nexus-3.85.0-03/bin/sonatype-nexus-repository-3.85.0-03.jar
 ```
-9. check if nexus process exists on the OS
-```
+**check if nexus process exists on the OS**
+```sh
 root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# netstat -nltp
 Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
@@ -150,6 +150,8 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# ps -ef | grep 2372
 nexus       2372       1 59 08:31 pts/0    00:01:44 /opt/nexus-3.85.0-03/jdk/temurin_17.0.13_11_linux_x86_64/jdk-17.0.13+11/bin/java -server -Dnexus.installer.type=linux-x86-64 -Xms2703m -Xmx2703m -XX:+UnlockDiagnosticVMOptions -XX:+LogVMOutput -XX:LogFile=../sonatype-work/nexus3/log/jvm.log -XX:-OmitStackTraceInFastThrow -Dkaraf.home=. -Dkaraf.base=. -Djava.util.logging.config.file=etc/spring/java.util.logging.properties -Dkaraf.data=../sonatype-work/nexus3 -Dkaraf.log=../sonatype-work/nexus3/log -Djava.io.tmpdir=../sonatype-work/nexus3/tmp -Djdk.tls.ephemeralDHKeySize=2048 -Dfile.encoding=UTF-8 --add-reads=java.xml=java.logging --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.naming/javax.naming.spi=ALL-UNNAMED --add-opens java.rmi/sun.rmi.transport.tcp=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.http=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.https=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.jar=ALL-UNNAMED --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED --add-exports=jdk.naming.rmi/com.sun.jndi.url.rmi=ALL-UNNAMED --add-exports=java.security.sasl/com.sun.security.sasl=ALL-UNNAMED --add-exports=java.base/sun.security.x509=ALL-UNNAMED --add-exports=java.base/sun.security.rsa=ALL-UNNAMED --add-exports=java.base/sun.security.pkcs=ALL-UNNAMED -jar /opt/nexus-3.85.0-03/bin/sonatype-nexus-repository-3.85.0-03.jar
 ```
+</details>
+
 10. Login to Nexus WEB UI with admin pass and change it 
 
 ---------------------------------------------------------
