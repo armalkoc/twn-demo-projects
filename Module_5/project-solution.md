@@ -5,7 +5,7 @@
 
 **Setup and configure a server on DigitalOcean**
 
-- My droplet server has following specification:
+My droplet server has following specification:
 ```sh
 Region: Frankfurt [since Im currently located in Germany]
 Image: Ubuntu 24.04 LTS x64
@@ -21,10 +21,10 @@ CPU options: Regular
 **To be able to connect to my droplet server using it's public IP, I'll create firwall rule "am-ssh-rule" that allows inbound traffic on SSH port 22**
 - for public IP (checked in https://whatismyipaddress.com/) of my localhost.
 - Also in the droplet network settings I applied previously created rule to my droplet ubuntu-s-1vcpu-512mb-10gb-fra1-01:
+![firewall-rule](droplet_firewall_rule.png)
 <br />
-![firewall rule](droplet_firewall_rule.png)
-<br />
-- After firewall rule has been created and applied to my droplet server, I'll try to establish passwordless SSH connection to root user:
+- After firewall rule has been applied to my droplet server, I'll try to establish passwordless SSH connection to root user:
+
 ![ssh](ssh_passless_connection.png)
 
 **In order to be able to run java application and Nexus in the future, I'll install java version 8 on this droplet:**
