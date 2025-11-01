@@ -197,9 +197,20 @@ gradle publish
 <br />
 </details>
 
-----------------------------------------------------------
+******
 
-1. enable maven-deploy-plugin in the pom.xml file and define Nexus repository
+<details>
+<summary>Java Maven Project - Build Jar & Upload to Nexus</summary>
+<br />
+
+**Enable "maven-deploy-plugin" in the pom.xml file and define Nexus repository in the pom.xml file**
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-deploy-plugin</artifactId>
+    <version>3.1.1</version>
+</plugin>
+```
 2. set the credentials in the ~/.m2/settings.xml
 3. do the mvn package and mvn deploy 
 4. we can see .jar artifact in the Nexus repository
