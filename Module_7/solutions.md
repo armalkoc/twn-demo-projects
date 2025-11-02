@@ -75,4 +75,16 @@ But when I try to start nodejs application using in docker container it doesn't 
 ```sh
 docker run -d -p 3000:3000 --name nodejs-app --network twn-demo-docker demo-docker-app:1.0
 ```
-
+I had to change connection string in the server.js, instead localhost i define mongodb in the connection string to be able to start nodejs application using "docker run" command:
+```js
+// use when starting application locally with node command
+//let mongoUrlLocal = "mongodb://admin:password@localhost:27017";
+let mongoUrlLocal = "mongodb://mongoadmin:mongoadmin123@mongodb:27017";
+```
+When I start nodejs app in the container it works now:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_7/app$ docker run -d -p 3000:3000 --name nodejs-app-newest3 --network twn-demo-docker demo-docker-app:2.3
+40b09d6564d4a28f2fd746be8e48d24a45564eecdf0012a24807da03abf7bf23
+armin@nb-pf565v12:~/twn-demo-projects/Module_7/app$ docker logs -f nodejs-app-newest3
+app listening on port 3000!
+```
