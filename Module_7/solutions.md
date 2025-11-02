@@ -65,6 +65,7 @@ app listening on port 3000!
 When I start application locally it works:
 ```sh
 node server.js
+app listening on port 3000!
 ```
 <br />
 
