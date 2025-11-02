@@ -69,7 +69,10 @@ node server.js
 <br />
 
 ![nodejs-app](nodejs_app_locally.png)
+<br />
 
-nodejs app container
+But when I try to start nodejs application using in docker container it doesn't work
+```sh
 docker run -d -p 3000:3000 --name nodejs-app --network twn-demo-docker demo-docker-app:1.0
+```
 
