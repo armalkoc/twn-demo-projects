@@ -74,6 +74,41 @@ node server.js
 But when I try to start nodejs application using in docker container it doesn't work
 ```sh
 docker run -d -p 3000:3000 --name nodejs-app --network twn-demo-docker demo-docker-app:1.0
+/opt/app/node_modules/mongodb/lib/sdam/topology.js:292
+                const timeoutError = new error_1.MongoServerSelectionError(`Server selection timed out after ${serverSelectionTimeoutMS} ms`, this.description);
+                                     ^
+
+MongoServerSelectionError
+    at Timeout._onTimeout (/opt/app/node_modules/mongodb/lib/sdam/topology.js:292:38)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7) {
+  cause: MongoNetworkError
+      at connectionFailureError (/opt/app/node_modules/mongodb/lib/cmap/connect.js:387:20)
+      at Socket.<anonymous> (/opt/app/node_modules/mongodb/lib/cmap/connect.js:310:22)
+      at Object.onceWrapper (node:events:639:26)
+      at Socket.emit (node:events:524:28)
+      at emitErrorNT (node:internal/streams/destroy:169:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:128:3)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+    cause: AggregateError [ECONNREFUSED]: 
+        at internalConnectMultiple (node:net:1122:18)
+        at afterConnectMultiple (node:net:1689:7) {
+      code: 'ECONNREFUSED',
+      [errors]: [
+        Error: connect ECONNREFUSED ::1:27017
+            at createConnectionError (node:net:1652:14)
+            at afterConnectMultiple (node:net:1682:16) {
+          errno: -111,
+          code: 'ECONNREFUSED',
+          syscall: 'connect',
+          address: '::1',
+          port: 27017
+        },
+        Error: connect ECONNREFUSED 127.0.0.1:27017
+            at createConnectionError (node:net:1652:14)
+            at afterConnectMultiple (node:net:1682:16) {
+          errno: -111,
+          code: 'ECONNREFUSED',
 ```
 I had to change connection string in the server.js, instead localhost i define mongodb in the connection string to be able to start nodejs application using "docker run" command:
 ```js
