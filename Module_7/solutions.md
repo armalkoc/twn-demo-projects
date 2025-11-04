@@ -201,7 +201,7 @@ After containers are started I can access to the mongo-express through WEB UI:
 ******
 
 <details>
-<summary>Dockerize Nodejs application and push to private Docker registry</summary>
+<summary>Project: Dockerize Nodejs application and push to private Docker registry</summary>
 <br />
 
 **I wrote this Dockerfile:**

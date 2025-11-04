@@ -1,5 +1,12 @@
 version: '3'
 services:
+  nodejs-app:
+    image: 647797471572.dkr.ecr.eu-central-1.amazonaws.com/docker-demo:1.0
+    container_name: nodejs-app 
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb 
   mongodb:
     image: mongo 
     container_name: mongodb 
