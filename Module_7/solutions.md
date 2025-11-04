@@ -221,8 +221,9 @@ RUN npm install
 
 CMD ["node", "server.js"]
 ```
-**Private Docker Registry on AWS (ECT)**
+**Private Docker Registry on AWS (ECR)**
 <br />
+
 Private Docker Registry has been created and it's been called "docker-demo". Since my aws client was configured in one of previous lessons to use access_key from user arin instead user admin, I had to reconfigure it again to use access_key of admin user. After that I can build,tag and push Docker Image using the commands that are shown in the "View push commands" tan in the management console.
 <br />
 
