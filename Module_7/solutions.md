@@ -221,3 +221,46 @@ RUN npm install
 
 CMD ["node", "server.js"]
 ```
+**Private Docker Registry on AWS (ECT)**
+<br />
+Private Docker Registry has been created and it's been called "docker-demo". Since my aws client was configured in one of previous lessons to use access_key from user arin instead user admin, I had to reconfigure it again to use access_key of admin user. After that I can build,tag and push Docker Image using the commands that are shown in the "View push commands" tan in the management console.
+<br />
+
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_7$ aws configure list
+NAME       : VALUE                    : TYPE             : LOCATION
+profile    : <not set>                : None             : None
+access_key : ****************FLUK     : shared-credentials-file : 
+secret_key : ****************TYDs     : shared-credentials-file : 
+region     : eu-central-1             : config-file      : ~/.aws/config
+
+armin@nb-pf565v12:~/twn-demo-projects/Module_7$ aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 647797471572.dkr.ecr.eu-central-1.amazonaws.com
+
+WARNING! Your credentials are stored unencrypted in '/home/armin/.docker/config.json'.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/go/credential-store/
+
+Login Succeeded
+
+armin@nb-pf565v12:~/twn-demo-projects/Module_7$ docker build -t docker-demo .
+
+armin@nb-pf565v12:~/twn-demo-projects/Module_7$ docker tag docker-demo:latest 647797471572.dkr.ecr.eu-central-1.amazonaws.com docker-demo:1.0
+
+armin@nb-pf565v12:~/twn-demo-projects/Module_7$ docker images
+REPOSITORY                                                    TAG                    IMAGE ID       CREATED          SIZE
+647797471572.dkr.ecr.eu-central-1.amazonaws.com/docker-demo   1.0                    6ea6a5ef4395   39 minutes ago   160MB
+demo-docker-app                                               3.0                    6ea6a5ef4395   39 minutes ago   160MB
+docker-demo                                                   latest                 6ea6a5ef4395   39 minutes ago   160MB
+
+armin@nb-pf565v12:~/twn-demo-projects/Module_7$ docker push 647797471572.dkr.ecr.eu-central-1.amazonaws.com/docker-demo:1.0
+The push refers to repository [647797471572.dkr.ecr.eu-central-1.amazonaws.com/docker-demo]
+50c4843482b6: Pushed 
+5f70bf18a086: Pushed 
+31c2befa5db7: Pushed 
+aad6d01c8ba2: Pushed 
+8bc61164599f: Pushed 
+a81608eb20af: Pushed 
+1548c3f692a1: Pushed 
+256f393e029f: Pushed 
+1.0: digest: sha256:4b19b1bac4b7a19735c701377f636e144f001da062dcde528f7451267bbdba8e size: 1992
+```
