@@ -279,3 +279,94 @@ We can see our Docker Image has been pushed to the ECR:
 <summary>Project: Deploy Docker application on a server with Docker Compose</summary>
 <br />
 
+**Configure AWS CLI client on my EC2 instance to use admin access_key**
+<br />
+
+```sh
+[ec2-user@ip-172-31-41-79 ~]$ aws configure list
+Name                    Value             Type    Location
+----                    -----             ----    --------
+profile                <not set>             None    None
+access_key     ****************FLUK shared-credentials-file    
+secret_key     ****************TYDs shared-credentials-file    
+region             eu-central-1      config-file    ~/.aws/config
+
+[ec2-user@ip-172-31-41-79 ~]$ aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 647797471572.dkr.ecr.eu-central-1.amazonaws.com
+WARNING! Your password will be stored unencrypted in /home/ec2-user/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+```
+<br />
+
+**Copy docker-compose file from my local machine to the EC2 instance**
+<br />
+
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_7$ scp -i /home/armin/.ssh/aws-web-docker-server.pem docker-compose.yaml \ 
+ec2-user@54.93 231.146:/home/ec2-user/module7
+
+docker-composeyaml                                                                                                                100%  731    48.3KB/s   00:00 
+```
+**Start the docker-compose.yaml on my EC2 instance**
+<br />
+
+```sh
+ec2-user@ip-172-31-41-79 module7]$ docker-compose -f docker-compose.yaml up
+WARN[0000] /home/ec2-user/module7/docker-compose.yaml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+[+] Running 27/27
+ ✔ mongodb Pulled                                                                                                                                                                       19.2s 
+   ✔ 4b3ffd8ccb52 Pull complete                                                                                                                                                          5.5s 
+   ✔ 34baad995762 Pull complete                                                                                                                                                          5.5s 
+   ✔ 5d6f7cf8e15d Pull complete                                                                                                                                                          5.8s 
+   ✔ f90aba9940a7 Pull complete                                                                                                                                                          5.9s 
+   ✔ 5d3652024acd Pull complete                                                                                                                                                          6.0s 
+   ✔ 74522aa03d00 Pull complete                                                                                                                                                          6.0s 
+   ✔ ce8dccf1f4c1 Pull complete                                                                                                                                                         17.5s 
+   ✔ a4ada45c862e Pull complete                                                                                                                                                         17.5s 
+ ✔ mongo-express Pulled                                                                                                                                                                 14.9s 
+   ✔ 619be1103602 Pull complete                                                                                                                                                          2.5s 
+   ✔ 7e9a007eb24b Pull complete                                                                                                                                                          7.4s 
+   ✔ 5189255e31c8 Pull complete                                                                                                                                                          7.5s 
+   ✔ 88f4f8a6bc8d Pull complete                                                                                                                                                          7.5s 
+   ✔ d8305ae32c95 Pull complete                                                                                                                                                          7.6s 
+   ✔ 45b24ec126f9 Pull complete                                                                                                                                                          7.6s 
+   ✔ 9f7f59574f7d Pull complete                                                                                                                                                         13.0s 
+   ✔ 0bf3571b6cd7 Pull complete                                                                                                                                                         13.1s 
+ ✔ nodejs-app Pulled                                                                                                                                                                     7.2s 
+   ✔ 2d35ebdb57d9 Pull complete                                                                                                                                                          0.6s 
+   ✔ 60e45a9660cf Pull complete                                                                                                                                                          3.4s 
+   ✔ e74e4ed823e9 Pull complete                                                                                                                                                          3.8s 
+   ✔ da04d522c98f Pull complete                                                                                                                                                          3.8s 
+   ✔ 55281ac72444 Pull complete                                                                                                                                                          3.9s 
+   ✔ 25084d3a37d3 Pull complete                                                                                                                                                          6.6s 
+   ✔ 4f4fb700ef54 Pull complete                                                                                                                                                          6.6s 
+   ✔ fae9ce8bbaf2 Pull complete                                                                                                                                                          6.9s 
+[+] Running 4/4
+ ✔ Network module7_default  Created                                                                                                                                                      0.2s 
+ ✔ Container mongodb        Created                                                                                                                                                      0.2s 
+ ✔ Container mongo-express  Created                                                                                                                                                      0.0s 
+ ✔ Container nodejs-app     Created         
+
+
+ [ec2-user@ip-172-31-41-79 ~]$ docker ps
+CONTAINER ID   IMAGE                                                             COMMAND                  CREATED          STATUS          PORTS                                           NAMES
+7416e7a7921e   mongo-express                                                     "/sbin/tini -- /dock…"   24 minutes ago   Up 24 minutes   0.0.0.0:8081->8081/tcp, :::8081->8081/tcp       mongo-express
+5c68d3ada5a1   647797471572.dkr.ecr.eu-central-1.amazonaws.com/docker-demo:1.1   "docker-entrypoint.s…"   24 minutes ago   Up 24 minutes   0.0.0.0:3000->3000/tcp, :::3000->3000/tcp       nodejs-app
+7486afdebff5   mongo                                                             "docker-entrypoint.s…"   24 minutes ago   Up 24 minutes   0.0.0.0:27017->27017/tcp, :::27017->27017/tcp   mongodb                                                                 
+```
+<br />
+
+I also configured security group of the EC2 instance to open 8081 and 3000 ports for mongo-express and nodejs application:
+<br />
+
+![security-group](ec2-sg.png)
+<br />
+
+When I try to access to the mongo-express it works:
+<br />
+
+![mongo-express-ec2](mongo-express-ec2.png)
+<br />
+
