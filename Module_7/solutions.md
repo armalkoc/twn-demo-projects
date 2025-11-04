@@ -163,6 +163,18 @@ services:
 **NOTE:**
 <br />
 We should change the connection string to the mongodb in the server.js to use mongoUrlDockerCompose instead mongoUrlLocal since containers will be able to communicate with each other using hostnames because the're started by compose and they belong to the same network created by compose.
+
+```js
+// Connect to the db using local application or docker compose variable in connection properties
+  MongoClient.connect(mongoUrlDockerCompose, mongoClientOptions, function (err, client)
+```
+<br />
+
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_7$ docker network ls | grep -i default
+71ce0e75dafb   module_7_default   bridge    local
+```
+
 <br />
 
 **Running MongoDB and Mongo-Express using docker-compose**
