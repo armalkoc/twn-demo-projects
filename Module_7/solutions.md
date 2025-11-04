@@ -124,3 +124,34 @@ armin@nb-pf565v12:~/twn-demo-projects/Module_7/app$ docker run -d -p 3000:3000 -
 armin@nb-pf565v12:~/twn-demo-projects/Module_7/app$ docker logs -f nodejs-app-newest3
 app listening on port 3000!
 ```
+</details>
+
+******
+
+<details>
+<summary>Project: Docker Compose - Run multiple Docker containers</summary>
+<br />
+
+**Create docker-compose.yaml file**
+Basically we will just use our commands from the prevous project and restructure it in the compose form:
+```yaml
+version: '3'
+services:
+  mongodb:
+    image: mongo 
+    container_name: mongodb 
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=mongoadmin123
+    ports:
+      - 27017:27017
+  mongo-express:
+    image: mongo-express 
+    container_name: mongo-express 
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=mongoadmin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=mongoadmin123
+      - ME_CONFIG_MONGODB_SERVER=mongodb 
+    ports:
+      - 8081:8081
+```
