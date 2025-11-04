@@ -156,4 +156,30 @@ services:
       - ME_CONFIG_MONGODB_SERVER=mongodb 
     ports:
       - 8081:8081
+    restart: always
+    depends_on:
+      - mongodb 
 ```
+**NOTE:**
+<br />
+We should change the connection string to the mongodb in the server.js to use mongoUrlDockerCompose instead mongoUrlLocal since containers will be able to communicate with each other using hostnames because the're started by compose and they belong to the same network created by compose.
+<br />
+
+**Running MongoDB and Mongo-Express using docker-compose**
+<br />
+
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_7$ docker-compose -f docker-compose.yaml up 
+WARN[0000] /home/armin/twn-demo-projects/Module_7/docker-compose.yaml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+[+] Running 1/1
+ ✔ Container mongodb Created
+ Attaching to mongo-express, mongodb
+mongo-express  | Waiting for mongo:27017...
+mongo-express  | Mongo Express server listening at http://0.0.0.0:8081
+mongo-express  | Server is open to allow connections from anyone (0.0.0.0)
+mongo-express  | basicAuth credentials are "admin:pass", it is recommended you change this in your config.js!
+```
+After containers are started I can access to the mongo-express through WEB UI:
+<br />
+
+![mongo-express](mongo-express-ui.png)
