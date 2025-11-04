@@ -59,7 +59,7 @@ app.get('/get-profile', function (req, res) {
 app.post('/update-profile', function (req, res) {
   let userObj = req.body;
   // Connect to the db using local application or docker compose variable in connection properties
-  MongoClient.connect(mongoUrlLocal, mongoClientOptions, function (err, client) {
+  MongoClient.connect(mongoUrlDockerCompose, mongoClientOptions, function (err, client) {
     if (err) throw err;
 
     let db = client.db(databaseName);
