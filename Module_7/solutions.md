@@ -133,6 +133,8 @@ app listening on port 3000!
 <br />
 
 **Create docker-compose.yaml file**
+<br />
+
 Basically we will just use our commands from the prevous project and restructure it in the compose form:
 ```yaml
 version: '3'
