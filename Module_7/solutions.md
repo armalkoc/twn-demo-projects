@@ -269,3 +269,13 @@ We can see our Docker Image has been pushed to the ECR:
 <br />
 
 ![ecr-docker-demo](ecr-docker-demo.png)
+<br />
+
+</details>
+
+******
+
+<details>
+<summary>Project: Deploy Docker application on a server with Docker Compose</summary>
+<br />
+
