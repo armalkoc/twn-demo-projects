@@ -265,7 +265,7 @@ a81608eb20af: Pushed
 256f393e029f: Pushed 
 1.0: digest: sha256:4b19b1bac4b7a19735c701377f636e144f001da062dcde528f7451267bbdba8e size: 1992
 ```
-We can see our Docker Image has been pushed to ECR:
+We can see our Docker Image has been pushed to the ECR:
 <br />
 
 ![ecr-docker-demo](ecr-docker-demo.png)
