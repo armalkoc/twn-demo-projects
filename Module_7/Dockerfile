@@ -2,8 +2,8 @@ FROM node:20-alpine
 
 ENV MONGO_INITDB_ROOT_USERNAME=mongoadmin \
     MONGO_INITDB_ROOT_PASSWORD=mongoadmin123 \
-    MONGO_DB_USERNAME=admin \
-    MONGO_DB_PWD=password
+    MONGO_DB_USERNAME=mongoadmin \
+    MONGO_DB_PWD=mongoadmi123
 
 RUN mkdir /opt/app
 
