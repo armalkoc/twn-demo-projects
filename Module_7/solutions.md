@@ -380,4 +380,64 @@ Currently when I try to access on port 3000 I got nothing,even though everything
 <summary>Project: Persist data with Docker Volumes</summary>
 <br />
 
+We haven't configured volume for our mongodb docker container which menas if it would be stopped/restarted, we would lose all the data. To make our data persistent, we will configure named volume "mongodb-data" for the mongodb container in the docker-compose file:
 
+```yaml
+version: '3'
+services:
+  nodejs-app:
+    image: 647797471572.dkr.ecr.eu-central-1.amazonaws.com/docker-demo:1.0
+    container_name: nodejs-app 
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb 
+  mongodb:
+    image: mongo 
+    container_name: mongodb 
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=mongoadmin123
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb-data:/data/db
+  mongo-express:
+    image: mongo-express 
+    container_name: mongo-express 
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=mongoadmin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=mongoadmin123
+      - ME_CONFIG_MONGODB_SERVER=mongodb 
+    ports:
+      - 8081:8081
+    restart: always
+    depends_on:
+      - mongodb 
+volumes:
+  mongodb-data:
+```
+Since my volume hasn't been created after "docker-compose restart mongodb" command, I had to remove the containers and run docker-compose command again:
+
+```sh
+[ec2-user@ip-172-31-41-79 module7]$ docker volume ls | grep -i mongodb
+local     module7_mongodb-data
+[ec2-user@ip-172-31-41-79 module7]$ docker volume inspect module7_mongodb-data
+[
+    {
+        "CreatedAt": "2025-11-06T09:38:35Z",
+        "Driver": "local",
+        "Labels": {
+            "com.docker.compose.config-hash": "c8c72212232ef31a5f860e0a5e0d09e3fb04761dbcdd36858368272dc99983f4",
+            "com.docker.compose.project": "module7",
+            "com.docker.compose.version": "2.40.2",
+            "com.docker.compose.volume": "mongodb-data"
+        },
+        "Mountpoint": "/var/lib/docker/volumes/module7_mongodb-data/_data",
+        "Name": "module7_mongodb-data",
+        "Options": null,
+        "Scope": "local"
+    }
+]
+```
+</details>
