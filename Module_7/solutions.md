@@ -462,6 +462,16 @@ I can see these changes in my mongodb using mongo-express UI:
 
 ![mongo-express-ui](mongo-express-ui_data.png)
 
+To test if volume works properly, I removed all the containers and started it again using docker-compose:
+```sh
+[ec2-user@ip-172-31-41-79 module7]$ docker-compose -f docker-compose.yaml down
+[ec2-user@ip-172-31-41-79 module7]$ docker-compose -f docker-compose.yaml up
+```
+And I can see all the data are still there:
+
+![mongo-express-data-check](mongo-express-data-check.png)
+
+
 </details>
 
 ******
