@@ -370,3 +370,14 @@ When I try to access to the mongo-express it works:
 ![mongo-express-ec2](mongo-express-ec2.png)
 <br />
 
+Currently when I try to access on port 3000 I got nothing,even though everything is configured as it should be !!!
+
+</details>
+
+******
+
+<details>
+<summary>Project: Persist data with Docker Volumes</summary>
+<br />
+
+
