@@ -448,3 +448,61 @@ local     module7_mongodb-data
 <summary>Project: Create Docker repository on Nexus and push to it</summary>
 <br />
 
+**Create new Droplet VM**
+
+I created new Deoplet VM "ubuntu-s-2vcpu-4gb-fra1-01":
+- 4 GB Memory
+- 80 GB Disk
+- FRA1 - Ubuntu 24.04 (LTS) x64
+
+I also creadet new firewall and configured inbound rules for SSH port 22 and Nexus port 8081 for my public IP:
+<br />
+
+![firewal-rulle](droplet-firewall-rule.png)
+<br />
+ 
+ Let's ensure our SSH connection works fine:
+ ```sh
+ armin@nb-pf565v12:~$ ssh -i /home/armin/.ssh/id_ed25519 root@139.59.143.140
+The authenticity of host '139.59.143.140 (139.59.143.140)' can't be established.
+ED25519 key fingerprint is SHA256:XYMtTaP97TYDvUsbFJD2W3hrHSU1dawPHONi7WQ0FaE.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '139.59.143.140' (ED25519) to the list of known hosts.
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-71-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Thu Nov  6 10:23:08 UTC 2025
+
+  System load:  0.05              Processes:             114
+  Usage of /:   2.5% of 76.45GB   Users logged in:       0
+  Memory usage: 5%                IPv4 address for eth0: 139.59.143.140
+  Swap usage:   0%                IPv4 address for eth0: 10.19.0.5
+
+Expanded Security Maintenance for Applications is not enabled.
+
+72 updates can be applied immediately.
+45 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+root@ubuntu-s-2vcpu-4gb-fra1-01:~# 
+```
+<br />
+
+**Nexus Installation**
+
