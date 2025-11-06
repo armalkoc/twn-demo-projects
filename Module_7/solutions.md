@@ -441,3 +441,10 @@ local     module7_mongodb-data
 ]
 ```
 </details>
+
+******
+
+<details>
+<summary>Project: Create Docker repository on Nexus and push to it</summary>
+<br />
+
