@@ -506,3 +506,80 @@ root@ubuntu-s-2vcpu-4gb-fra1-01:~#
 
 **Nexus Installation**
 
+Download the nexus software:
+```sh
+root@ubuntu-s-2vcpu-4gb-fra1-01:~# cd /opt/
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# wget https://download.sonatype.com/nexus/3/nexus-3.86.0-08-linux-x86_64.tar.gz
+--2025-11-06 10:29:56--  https://download.sonatype.com/nexus/3/nexus-3.86.0-08-linux-x86_64.tar.gz
+Resolving download.sonatype.com (download.sonatype.com)... 204.236.175.70, 54.176.187.166
+Connecting to download.sonatype.com (download.sonatype.com)|204.236.175.70|:443... connected.
+HTTP request sent, awaiting response... 302 Moved Temporarily
+Location: https://cdn.download.sonatype.com/repository/downloads-prod-group/3/nexus-3.86.0-08-linux-x86_64.tar.gz [following]
+--2025-11-06 10:29:57--  https://cdn.download.sonatype.com/repository/downloads-prod-group/3/nexus-3.86.0-08-linux-x86_64.tar.gz
+Resolving cdn.download.sonatype.com (cdn.download.sonatype.com)... 104.18.1.134, 104.18.0.134, 2606:4700::6812:186, ...
+Connecting to cdn.download.sonatype.com (cdn.download.sonatype.com)|104.18.1.134|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 436493027 (416M) [application/x-gzip]
+Saving to: ‘nexus-3.86.0-08-linux-x86_64.tar.gz’
+
+nexus-3.86.0-08-linux-x86_64.tar.gz             100%[=====================================================================================================>] 416.27M   258MB/s    in 1.6s    
+
+2025-11-06 10:29:58 (258 MB/s) - ‘nexus-3.86.0-08-linux-x86_64.tar.gz’ saved [436493027/436493027]
+```
+<br />
+
+Extract tarball file i the /opt directory:
+```sh
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# tar xvzf nexus-3.86.0-08-linux-x86_64.tar.gz 
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# ls -lrth
+total 417M
+drwxr-xr-x 3 root root 4.0K Nov  3 23:12 sonatype-work
+-rw-r--r-- 1 root root 417M Nov  5 15:28 nexus-3.86.0-08-linux-x86_64.tar.gz
+drwxr-xr-x 4 root root 4.0K Nov  6 09:48 digitalocean
+drwxr-xr-x 6 root root 4.0K Nov  6 10:30 nexus-3.86.0-08
+```
+Create "nexus" user that will be used to start Nexus service as we don't want to make security risk and start it as a root user:
+```sh
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# useradd -m -c "Nexus Software User" -s /bin/bash nexus
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# passwd nexus
+New password: 
+Retype new password: 
+passwd: password updated successfully
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# getent passwd nexus
+nexus:x:1000:1000:Nexus Software User:/home/nexus:/bin/bash
+```
+Change ownership on sonatype-work and nexus* directories using recursive parameter:
+```sh
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# chown -R nexus:nexus sonatype-work/
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# chown -R nexus:nexus nexus-3.86.0-08
+```
+Create nexus.rc file to define user which will be used to start nexus and start the service:
+```sh
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# ls -lrth nexus-3.86.0-08/bin/ && cat nexus-3.86.0-08/bin/nexus.rc
+total 255M
+-rw-r--r-- 1 nexus nexus 1.3K Nov  3 22:38 nexus.vmoptions
+-rwxr-xr-x 1 nexus nexus 6.6K Nov  3 22:38 nexus
+-rw-r--r-- 1 nexus nexus 255M Nov  3 23:09 sonatype-nexus-repository-3.86.0-08.jar
+-rwxr-xr-x 1 nexus nexus   22 Nov  6 10:37 nexus.rc
+start_as_user="nexus"
+```
+Install java 17:
+```sh
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# java --version
+openjdk 17.0.16 2025-07-15
+OpenJDK Runtime Environment (build 17.0.16+8-Ubuntu-0ubuntu124.04.1)
+OpenJDK 64-Bit Server VM (build 17.0.16+8-Ubuntu-0ubuntu124.04.1, mixed mode, sharing)
+```
+Start the nexus service as nexus user:
+```sh
+nexus@ubuntu-s-2vcpu-4gb-fra1-01:/opt/nexus-3.86.0-08/bin$ ./nexus start
+Starting nexus
+nexus@ubuntu-s-2vcpu-4gb-fra1-01:/opt/nexus-3.86.0-08/bin$ ps -ef | grep -i nexus
+root        3402    2140  0 10:40 pts/0    00:00:00 sudo su - nexus
+root        3403    3402  0 10:40 pts/1    00:00:00 sudo su - nexus
+root        3404    3403  0 10:40 pts/1    00:00:00 su - nexus
+nexus       3405    3404  0 10:40 pts/1    00:00:00 -bash
+nexus       3666       1 99 10:41 pts/1    00:00:03 /opt/nexus-3.86.0-08/jdk/temurin_17.0.13_11_linux_x86_64/jdk-17.0.13+11/bin/java -server -Dnexus.installer.type=linux-x86-64 -Xms2703m -Xmx2703m -XX:+UnlockDiagnosticVMOptions -XX:+LogVMOutput -XX:LogFile=../sonatype-work/nexus3/log/jvm.log -XX:-OmitStackTraceInFastThrow -Dkaraf.home=. -Dkaraf.base=. -Djava.util.logging.config.file=etc/spring/java.util.logging.properties -Dkaraf.data=../sonatype-work/nexus3 -Dkaraf.log=../sonatype-work/nexus3/log -Djava.io.tmpdir=../sonatype-work/nexus3/tmp -Djdk.tls.ephemeralDHKeySize=2048 -Dfile.encoding=UTF-8 --add-reads=java.xml=java.logging --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.naming/javax.naming.spi=ALL-UNNAMED --add-opens java.rmi/sun.rmi.transport.tcp=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.http=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.https=ALL-UNNAMED --add-exports=java.base/sun.net.www.protocol.jar=ALL-UNNAMED --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED --add-exports=jdk.naming.rmi/com.sun.jndi.url.rmi=ALL-UNNAMED --add-exports=java.security.sasl/com.sun.security.sasl=ALL-UNNAMED --add-exports=java.base/sun.security.x509=ALL-UNNAMED --add-exports=java.base/sun.security.rsa=ALL-UNNAMED --add-exports=java.base/sun.security.pkcs=ALL-UNNAMED -jar /opt/nexus-3.86.0-08/bin/sonatype-nexus-repository-3.86.0-08.jar
+```
+
+
