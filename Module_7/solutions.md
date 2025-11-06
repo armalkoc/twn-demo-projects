@@ -686,4 +686,37 @@ a81608eb20af: Pushed
 <summary>Project: Deploy Nexus as Docker container</summary>
 <br />
 
+**Create and Configure Droplet**
+<br /> 
+Since I already have created Droplet instance I'll use it for this project.
+
+**Set up and run Nexus as a Docker container**
+<br />
+
+First of all I want to provide data persistency and I'll create new volume for nexus:
+```sh
+[ec2-user@ip-172-31-41-79 module7]$ docker volume create nexus-data
+nexus-data
+```
+Now I will install docker on my droplet instance and add user to the docker group:
+```sh
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# apt  install docker.io
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# docker -v
+Docker version 28.2.2, build 28.2.2-0ubuntu1~24.04.1
+```
+I'll add user nexus to the docker group:
+```sh
+root@ubuntu-s-2vcpu-4gb-fra1-01:/opt# sudo usermod -aG docker nexus
+root@ubuntu-s-2vcpu-4gb-fra1-01:~# sudo su - nexus
+nexus@ubuntu-s-2vcpu-4gb-fra1-01:~$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+nexus@ubuntu-s-2vcpu-4gb-fra1-01:~$ docker volume create nexus-app-data
+nexus-app-data
+nexus@ubuntu-s-2vcpu-4gb-fra1-01:~$ docker run -d -p 8081:8081 --name nexus -v nexus-app-data:/nexus-data sonatype/nexus3
+```
+Since the port 8081 is already allowed in the firewall configuration we can test access to our Nexusi through WEB UI:
+<br />
+
+![nexus-docker-acc](nexus-docker-acc.png)
+
 
