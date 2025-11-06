@@ -585,4 +585,16 @@ After I logged in, changed default password and set up my nexus I can create new
 
 **Create Docker repository**
 
+I created "docker-demo-project" repository with the following specifications:
+- http port 7070
+- default blob storage
+
+![nexus-repo](docker-demo-project-repo.png)
+<br />
+
+I also created role for this repository and user as well:
+![docker-demo-role](docker-demo-role.png)
+<br />
+
+![docker-demo-user](docker-demo-user.png)
 
