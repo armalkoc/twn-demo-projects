@@ -646,3 +646,12 @@ a81608eb20af: Pushed
 ```
 ![docker-image-pushed](docker-demo-image-pushed.png)
 
+</details>
+
+******
+
+<details>
+<summary>Project: Deploy Nexus as Docker container</summary>
+<br />
+
+
