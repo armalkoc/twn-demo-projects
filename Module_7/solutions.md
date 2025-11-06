@@ -458,7 +458,10 @@ If I now edit some informations using WEB UI like this and save it:
 ![data-edit-ui](data-edit-ui.png)
 
 I can see these changes in my mongodb using mongo-express UI:
-![mongo-express-ui](mongo-express-ui-data.png)
+<br />
+
+![mongo-express-ui](mongo-express-ui_data.png)
+
 </details>
 
 ******
