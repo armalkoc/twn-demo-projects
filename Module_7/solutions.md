@@ -598,3 +598,37 @@ I also created role for this repository and user as well:
 
 ![docker-demo-user](docker-demo-user.png)
 
+**Push Docker Image to the Nexus repository**
+
+Tag the image:
+```sh
+armin@nb-pf565v12:~$ docker tag demo-docker-app:1.0 139.59.143.140:7070/docker-demo-project:1.0
+```
+Because my Nexus repository for docker is plan http (not https), I have to add my repository as insecure repository in the /etc/docker/daemon.json file. After thet docker.service needs to be restarted and login should work:
+```sh
+armin@nb-pf565v12:~$ cat /etc/docker/daemon.json
+{
+  "insecure-registries": [
+	  "192.168.0.112:5000",
+	  "devops-nexus:5000",
+	  "192.168.0.112:8083",
+	  "192.168.0.112:7070",
+	  "192.168.0.112:3031",
+	  "devops-nexus:7070",
+	  "139.59.143.140:7070"
+  ]
+}
+
+armin@nb-pf565v12:~$ systemctl --user restart docker.service
+armin@nb-pf565v12:~$ docker login 139.59.143.140:7070
+Username: dockerdemo
+Password: 
+
+WARNING! Your credentials are stored unencrypted in '/home/armin/.docker/config.json'.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/go/credential-store/
+
+Login Succeeded
+```
+
+
