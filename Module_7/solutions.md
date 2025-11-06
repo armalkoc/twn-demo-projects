@@ -371,6 +371,11 @@ When I try to access to the mongo-express it works:
 <br />
 
 To be able to access on my nodejs application on port 3000, I had to adjust "index.html" file and use ec2-54-93-231-146.eu-central-1.compute.amazonaws.com instead localhost, since I was getting this issue:
+```ssh
+[ec2-user@ip-172-31-41-79 module7]$ docker exec -it nodejs-app grep ec2 /opt/app/index.html
+  const response = await fetch('http://ec2-54-93-231-146.eu-central-1.compute.amazonaws.com:3000/get-profile');
+  const response = await fetch('http://ec2-54-93-231-146.eu-central-1.compute.amazonaws.com:3000/update-profile',
+```
 <br />
 
 ![app-access-issue](app-access-issue.png)
