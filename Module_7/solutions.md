@@ -370,7 +370,16 @@ When I try to access to the mongo-express it works:
 ![mongo-express-ec2](mongo-express-ec2.png)
 <br />
 
-Currently when I try to access on port 3000 I got nothing,even though everything is configured as it should be !!!
+To be able to access on my nodejs application on port 3000, I had to adjust "index.html" file and use ec2-54-93-231-146.eu-central-1.compute.amazonaws.com instead localhost, since I was getting this issue:
+<br />
+
+![app-access-issue](app-access-issue.png)
+<br />
+
+I rebuild the Docker Image and start it with docker-compose and now it works perfectly:
+<br />
+
+![nodejs-app-works](nodejs-app-works.png)
 
 </details>
 
