@@ -630,5 +630,19 @@ https://docs.docker.com/go/credential-store/
 
 Login Succeeded
 ```
-
+Now we can push our Docker Image to the repository:
+```sh
+armin@nb-pf565v12:~$ docker push 139.59.143.140:7070/docker-demo-project:1.0
+The push refers to repository [139.59.143.140:7070/docker-demo-project]
+694fa2a956de: Pushed 
+5f70bf18a086: Pushed 
+efa19e510c86: Pushed 
+aad6d01c8ba2: Pushed 
+8bc61164599f: Pushed 
+a81608eb20af: Pushed 
+1548c3f692a1: Pushed 
+256f393e029f: Pushed 
+1.0: digest: sha256:4f3069f04b1df6dff9bd3ad1920387a4570c4a8cef7eec39a656ffed1fee2f81 size: 1992
+```
+![docker-image-pushed](docker-demo-image-pushed.png)
 
