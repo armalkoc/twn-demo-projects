@@ -102,3 +102,9 @@ root@ubuntu-s-1vcpu-2gb-fra1-01:~# cat /var/lib/docker/volumes/jenkins-data/_dat
 <br />
 
 ![suggested-plugins](suggested-plugins.png)
+<br />
+
+Create first admin user and start Jenkins:
+<br />
+
+![first-admin-user](first-admin-user.png)
