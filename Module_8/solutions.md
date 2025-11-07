@@ -397,3 +397,9 @@ I executed multibranch job and saw that build an artifact and docker build/push 
 <br />
 
 ![multibranch-image-pushed](multibranch-image-pushed.png)
+
+</details>
+
+******
+
+
