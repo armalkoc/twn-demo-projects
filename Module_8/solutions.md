@@ -214,3 +214,32 @@ So everything is prepared and we can continue with our demo projects.
 <summary>Project: Create a CI Pipeline with Jenkinsfile (Freestyle, Pipeline, Multibranch Pipeline)</summary>
 <br />
 
+**Install Build Tools (Maven, Node) in Jenkins**
+
+maven, nodejs and stage view installed 
+We installed maven through "Manage Jenkins -> Tools":
+<br />
+
+![maven-tools](maven-tools.png)
+<br />
+For the NodeJS, we installed NodeJS plugin 1.6.5 thorugh "Manage Jenkins -> Plugins -> Available Plugins" and then using "Manage Jenkins -> Tools":
+<br />
+
+![nodejs-tools](nodejs-tools.png)
+<br />
+
+**Make Docker available on Jenkins server**
+
+We already did it in the previous demo project mounting "/var/run/docker.sock from our host to the Jenkins container, so we've installed both, docker and docker-compose as well:
+```sh
+jenkins@a6df85ac312f:/$ docker ps
+CONTAINER ID   IMAGE                 COMMAND                  CREATED       STATUS         PORTS                                                                                          NAMES
+a6df85ac312f   jenkins/jenkins:lts   "/usr/bin/tini -- /u…"   3 hours ago   Up 8 minutes   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp, 0.0.0.0:50000->50000/tcp, [::]:50000->50000/tcp   jenkins
+jenkins@a6df85ac312f:/$ docker -v
+Docker version 28.5.2, build ecc6942
+jenkins@a6df85ac312f:/$ ls -la /var/run/docker.sock 
+srw-rw-rw- 1 root 112 0 Nov  7 06:24 /var/run/docker.sock
+```
+<br />
+
+**Create Jenkins credentials for a git repository**
