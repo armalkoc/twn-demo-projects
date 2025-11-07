@@ -108,3 +108,100 @@ Create first admin user and start Jenkins:
 <br />
 
 ![first-admin-user](first-admin-user.png)
+
+**Setup Jenkins container**
+
+In most of the cases we will need to build our application as Docker Image. In order to be able to run docker commands inside the Jenkins container, we have to provide Docker inside the Jenkins container. 
+
+First what we did we mounted /var/run/docker.sock from our droplet instance to the Jenkins container as we saw earlier. We need one more thing to be able to execute Docker commands from the Jenkins container:
+
+```sh
+root@ubuntu-s-1vcpu-2gb-fra1-01:~# docker exec -u root -it jenkins bash
+root@a6df85ac312f:/# curl https://get.docker.com/ > dockerinstall && chmod 777 dockerinstall && ./dockerinstall
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 21013  100 21013    0     0   229k      0 --:--:-- --:--:-- --:--:--  230k
+# Executing docker install script, commit: e3bd92d5b36b59b39661e4e6d05c786db9bb3ad7
++ sh -c apt-get -qq update >/dev/null
++ sh -c DEBIAN_FRONTEND=noninteractive apt-get -y -qq install ca-certificates curl >/dev/null
++ sh -c install -m 0755 -d /etc/apt/keyrings
++ sh -c curl -fsSL "https://download.docker.com/linux/debian/gpg" -o /etc/apt/keyrings/docker.asc
++ sh -c chmod a+r /etc/apt/keyrings/docker.asc
++ sh -c echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian trixie stable" > /etc/apt/sources.list.d/docker.list
++ sh -c apt-get -qq update >/dev/null
++ sh -c DEBIAN_FRONTEND=noninteractive apt-get -y -qq install docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-ce-rootless-extras docker-buildx-plugin docker-model-plugin >/dev/null
++ sh -c docker version
+Client: Docker Engine - Community
+ Version:           28.5.2
+ API version:       1.50 (downgraded from 1.51)
+ Go version:        go1.25.3
+ Git commit:        ecc6942
+ Built:             Wed Nov  5 14:43:33 2025
+ OS/Arch:           linux/amd64
+ Context:           default
+
+Server:
+ Engine:
+  Version:          28.2.2
+  API version:      1.50 (minimum version 1.24)
+  Go version:       go1.23.1
+  Git commit:       28.2.2-0ubuntu1~24.04.1
+  Built:            Wed Sep 10 14:16:39 2025
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          1.7.28
+  GitCommit:        
+ runc:
+  Version:          1.3.3-0ubuntu1~24.04.2
+  GitCommit:        
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        
+
+================================================================================
+
+To run Docker as a non-privileged user, consider setting up the
+Docker daemon in rootless mode for your user:
+
+    dockerd-rootless-setuptool.sh install
+
+Visit https://docs.docker.com/go/rootless/ to learn about rootless mode.
+
+
+To run the Docker daemon as a fully privileged service, but granting non-root
+users access, refer to https://docs.docker.com/go/daemon-access/
+
+WARNING: Access to the remote API on a privileged Docker daemon is equivalent
+         to root access on the host. Refer to the 'Docker daemon attack surface'
+         documentation for details: https://docs.docker.com/go/attack-surface/
+
+================================================================================
+
+root@a6df85ac312f:/# ls -la /var/run/docker.sock 
+srw-rw---- 1 root 112 0 Nov  7 06:24 /var/run/docker.sock
+root@a6df85ac312f:/# chmod 666 /var/run/docker.sock 
+```
+Now if we test if our docker commands work inside the Jenkins container, we'll se they work:
+
+```sh
+root@ubuntu-s-1vcpu-2gb-fra1-01:~# docker exec  -it jenkins bash
+jenkins@a6df85ac312f:/$ docker ps
+CONTAINER ID   IMAGE                 COMMAND                  CREATED          STATUS          PORTS                                                                                          NAMES
+a6df85ac312f   jenkins/jenkins:lts   "/usr/bin/tini -- /u…"   24 minutes ago   Up 23 minutes   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp, 0.0.0.0:50000->50000/tcp, [::]:50000->50000/tcp   jenkins
+
+jenkins@a6df85ac312f:/$ docker pull redis
+Using default tag: latest
+latest: Pulling from library/redis
+1adabd6b0d6b: Pull complete 
+22506777a096: Pull complete 
+5dec27664782: Pull complete 
+2e60b18d70d8: Pull complete 
+729797e636a7: Pull complete 
+4f4fb700ef54: Pull complete 
+6c981fc7c621: Pull complete 
+Digest: sha256:5c7c0445ed86918cb9efb96d95a6bfc03ed2059fe2c5f02b4d74f477ffe47915
+Status: Downloaded newer image for redis:latest
+docker.io/library/redis:latest
+```
+So everything is prepared and we can continue with our demo projects.
