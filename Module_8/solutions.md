@@ -272,3 +272,8 @@ To be able to do push docker image to the DockerHub private repo, I had to do do
 <br />
 
 ![pushed-image](pushed-image.png)
+<br />
+
+**Pipeline Job**
+
+
