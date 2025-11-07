@@ -243,3 +243,17 @@ srw-rw-rw- 1 root 112 0 Nov  7 06:24 /var/run/docker.sock
 <br />
 
 **Create Jenkins credentials for a git repository**
+<br />
+In this project I'll use GitLab as my code repository.I'll now create credentials for my GitLab repository:
+<br />
+
+![gitlab-credentials](gitlab-credentials.png)
+<br />
+
+</details>
+
+******
+
+<details>
+<summary>Project: Create different Jenkins job types (Freestyle, Pipeline, Multibranch pipeline) for the Java Maven project</summary>
+<br />
