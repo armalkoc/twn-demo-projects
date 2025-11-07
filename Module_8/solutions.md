@@ -320,3 +320,71 @@ I execute my job and it was finished successfuly. Docker Image was pushed to the
 <br />
 
 ![dockerhub-repo](dockerhub-repo.png)
+<br />
+
+**Multibranch Pipeline**
+
+I have created two new branches in my repository, bug-fix and feature-dev:
+```sh
+armin@nb-pf565v12:~/jenkins-demo-project/java-maven-app$ git branch -l
+  bug-fix
+  feature-dev
+* master
+```
+Now, I'll create new, multibranch, Jenkins job and called it "demo-project-multi" with the "Filter by name (with regular expression)" behavior parameter:
+<br />
+
+![multibranch-job](multibranch-job.png)
+<br />
+
+I rewrote my Jenkinsfile in master branch to do build an artifact and build/push Docker Image only for "master" branch. Master branch has been merged into the other two branches.This is my Jenkinsfile:
+```groovy
+pipeline {
+    agent any
+    tools {
+        maven 'maven-3.9'
+    }
+
+    stages {
+        stage("Application Test") {
+            steps {
+                script {
+                    echo "Application Code Test"
+                    sh "mvn test"
+                }
+            }
+        }
+        stage("Application Build") {
+            when {
+                expression {
+                    BRANCH_NAME == 'master'
+                }
+            }
+            steps {
+                script {
+                    echo "Build the application artifact"
+                    sh "mvn clean package"
+                }
+            }
+        }
+        stage("Build and Push Docker Image") {
+            when {
+                expression {
+                    BRANCH_NAME == 'master'
+                }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerHub-private', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh 'docker build -t amalkoc/jenkins-demo:1.3 .'
+                    sh "echo $PASS | docker login -u $USER --password-stdin"
+                    sh 'docker push amalkoc/jenkins-demo:1.3'
+                }
+            }
+        }
+    }
+}
+```
+I executed multibranch job and saw that build an artifact and docker build/push was done only for master branch. Docker Image was pushed to my DockerHub private repository:
+<br />
+
+![multibranch-image-pushed](multibranch-image-pushed.png)
