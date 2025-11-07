@@ -86,3 +86,9 @@ New firewall rule for port 8080 has been configured:
 <br />
 
 ![jenkins-firewall-rule](jenkins-firewall-rule.png)
+<br />
+
+After that I test access to the Jenkins UI and it works fine:
+<br />
+
+![jenkins-ui-access](jenkins-ui-access.png)
