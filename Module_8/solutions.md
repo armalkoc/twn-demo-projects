@@ -257,3 +257,18 @@ In this project I'll use GitLab as my code repository.I'll now create credential
 <details>
 <summary>Project: Create different Jenkins job types (Freestyle, Pipeline, Multibranch pipeline) for the Java Maven project</summary>
 <br />
+
+**Freestyle Jenkins Job**
+
+I created freestyle type of the Jenkins Job and called it "demo-project-free". In the job configuration, SCM has been configured to use this gitlab repository - https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app.git. Credentials for GitLab repository have already been created in the "Manage Jenkins -> Credentials -> System -> Gloabal Credentials" in the previous project.
+<br />
+
+![freestyle-scm](freestyle-scm.png)
+<br />
+
+![freestyle-build-steps](freestyle-build-steps.png)
+
+To be able to do push docker image to the DockerHub private repo, I had to do docker login inside the docker container and after that my job was successful and image has been pushed to the DockerHub private repository:
+<br />
+
+![pushed-image](pushed-image.png)
