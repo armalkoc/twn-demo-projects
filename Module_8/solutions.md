@@ -276,4 +276,47 @@ To be able to do push docker image to the DockerHub private repo, I had to do do
 
 **Pipeline Job**
 
+I created pipeline job called "demo-project-pipeline" and configures SCM https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app.git. Credentials for the SCM are previously created. 
 
+In order to be able to push my Docker Image on the DockerHub private repo, I created credentials for the DockerHub in my Jenkins as well. So now, we have everything that is needed for our pipelin.My Jenkinsfile looks like:
+
+```groovy
+pipeline {
+    agent any
+    tools {
+        maven 'maven-3.9'
+    }
+
+    stages {
+        stage("Application Test") {
+            steps {
+                script {
+                    echo "Application Code Test"
+                    sh "mvn test"
+                }
+            }
+        }
+        stage("Application Build") {
+            steps {
+                script {
+                    echo "Build the application artifact"
+                    sh "mvn clean package"
+                }
+            }
+        }
+        stage("Build and Push Docker Image") {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerHub-private', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh 'docker build -t amalkoc/jenkins-demo:1.2 .'
+                    sh "echo $PASS | docker login -u $USER --password-stdin"
+                    sh 'docker push amalkoc/jenkins-demo:1.2'
+                }
+            }
+        }
+    }
+}
+```
+I execute my job and it was finished successfuly. Docker Image was pushed to the DockerHub private repository:
+<br />
+
+![dockerhub-repo](dockerhub-repo.png)
