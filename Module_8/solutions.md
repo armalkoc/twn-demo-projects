@@ -209,3 +209,8 @@ So everything is prepared and we can continue with our demo projects.
 </details>
 
 ******
+
+<details>
+<summary>Project: Create a CI Pipeline with Jenkinsfile (Freestyle, Pipeline, Multibranch Pipeline)</summary>
+<br />
+
