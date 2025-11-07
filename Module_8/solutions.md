@@ -92,3 +92,13 @@ After that I test access to the Jenkins UI and it works fine:
 <br />
 
 ![jenkins-ui-access](jenkins-ui-access.png)
+<br />
+
+Use admin password for first loggin and install suggested plugins:
+```sh
+root@ubuntu-s-1vcpu-2gb-fra1-01:~# cat /var/lib/docker/volumes/jenkins-data/_data/secrets/initialAdminPassword 
+9ac5404de******
+```
+<br />
+
+![suggested-plugins](suggested-plugins.png)
