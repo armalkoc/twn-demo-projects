@@ -384,6 +384,15 @@ pipeline {
     }
 }
 ```
+My Jenkins Multibranch job:
+<br />
+
+![my-multibranch-job](my-multibranch-job.png)
+
+These are to logs of the other two branches:
+[bugfix](bugfix-branch-console-log.txt)
+[feature](feature-dev-branch-console-log.txt)
+
 I executed multibranch job and saw that build an artifact and docker build/push was done only for master branch. Docker Image was pushed to my DockerHub private repository:
 <br />
 

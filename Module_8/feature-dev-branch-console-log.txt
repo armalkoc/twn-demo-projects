@@ -1,0 +1,128 @@
+Branch indexing
+ > git rev-parse --resolve-git-dir /var/jenkins_home/caches/git-db83866db7e1dec4378c675fc560d9ef/.git # timeout=10
+Setting origin to https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app.git
+ > git config remote.origin.url https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app.git # timeout=10
+Fetching origin...
+Fetching upstream changes from origin
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git config --get remote.origin.url # timeout=10
+using GIT_ASKPASS to set credentials credentials for GitLab
+ > git fetch --no-tags --force --progress -- origin +refs/heads/*:refs/remotes/origin/* # timeout=10
+Seen branch in repository origin/bug-fix
+Seen branch in repository origin/feature-dev
+Seen branch in repository origin/main
+Seen branch in repository origin/master
+Seen 4 remote branches
+Obtained Jenkinsfile from b5658731c90bb6519607a3c4f79a5f3e0a4cae6d
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/demo-project-multi_feature-dev
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential gitlab-cred
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/demo-project-multi_feature-dev/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app.git # timeout=10
+Fetching without tags
+Fetching upstream changes from https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+using GIT_ASKPASS to set credentials credentials for GitLab
+ > git fetch --no-tags --force --progress -- https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision b5658731c90bb6519607a3c4f79a5f3e0a4cae6d (feature-dev)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f b5658731c90bb6519607a3c4f79a5f3e0a4cae6d # timeout=10
+Commit message: "edited when condition and moved outside of steps"
+ > git rev-list --no-walk c0c0359669a5de4edcb75d4ee162ac071bead6d5 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Tool Install)
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Application Test)
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+Application Code Test
+[Pipeline] sh
++ mvn test
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.example:java-maven-app:jar:1.1.0-SNAPSHOT
+[WARNING] 'build.plugins.plugin.(groupId:artifactId)' must be unique but found duplicate declaration of plugin org.apache.maven.plugins:maven-deploy-plugin @ line 21, column 21
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] 
+[INFO] ---------------------< com.example:java-maven-app >---------------------
+[INFO] Building java-maven-app 1.1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ java-maven-app ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ java-maven-app ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ java-maven-app ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /var/jenkins_home/workspace/demo-project-multi_feature-dev/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ java-maven-app ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ java-maven-app ---
+[INFO] No tests to run.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.427 s
+[INFO] Finished at: 2025-11-07T15:45:13Z
+[INFO] ------------------------------------------------------------------------
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Application Build)
+Stage "Application Build" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build and Push Docker Image)
+Stage "Build and Push Docker Image" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
