@@ -205,3 +205,7 @@ Status: Downloaded newer image for redis:latest
 docker.io/library/redis:latest
 ```
 So everything is prepared and we can continue with our demo projects.
+
+</details>
+
+******
