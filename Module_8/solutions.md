@@ -402,4 +402,7 @@ I executed multibranch job and saw that build an artifact and docker build/push 
 
 ******
 
+<details>
+<summary>Project: Create a Jenkins Shared Library</summary>
+<br />
 
