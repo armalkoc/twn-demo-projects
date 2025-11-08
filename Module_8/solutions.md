@@ -544,3 +544,47 @@ After that webhook trigger for push event in our multibranch job works fine
 </details>
 
 ******
+
+<details>
+<summary>Project: Dynamically Increment Application version in Jenkins Pipeline</summary>
+<br />
+
+**Configure CI step: Increment patch version**
+<br />
+To increment patch version of the application I defined vars/incrementVersion.groovy in the Shared Librar and it's been referenced in the Jekinsfile. Shared Librari repository is - https://gitlab.com/twn-armin/jenkins-demo-project/demo-project-shared-library.git .
+Jekinsfile is in ths repository - https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app/-/tree/master?ref_type=heads .
+
+**Configure CI step: Build Java application and clean old artifacts**
+<br />
+To clean java application artifact and clean old one I used this vars/appBuild.groovy and referenced it in the Jenkinsfile. You can find it in the Shared Library repository - https://gitlab.com/twn-armin/jenkins-demo-project/demo-project-shared-library.git and Jenkinsfile is in this repository - https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app/-/tree/master?ref_type=heads .
+
+**Configure CI step: Build Image with dynamic Docker Image Tag**
+<br />
+
+In order to build Docker Image with dynamic tag I defined env variable IMAGE_NAME in the vars/incrementVersion.groovy. That variable has value in form of env.IMAGE_NAME = "${version}-${BUILD_NUMBER}", so during the every new build we will have new version of the application and new build number as well.
+Shared Library repository - https://gitlab.com/twn-armin/jenkins-demo-project/demo-project-shared-library.git .
+Jenkinsfile repository - https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app/-/tree/master?ref_type=heads .
+
+**Configure CI step: Push Image to private DockerHub repository**
+<br />
+
+In order to push our Docker Image to the DockerHub repository I created Docker class in the src/com/example/Docker.groovy where I defined Docker push command and as you can see Docker Image was pushed to the DockerHub private repository:
+<br />
+
+![docker-image-hub-repo](docker-image-hub-repo.png)
+<br />
+
+**Configure CI step: Commit version update of Jenkins back to Git repository**
+<br />
+
+We want to commit app version change every time when build was triggered, so patch version change in the pom.xml file will be committed to the application repository. We configured vars/commitVersion.groovy in the Shared Library repository - https://gitlab.com/twn-armin/jenkins-demo-project/demo-project-shared-library.git and referenced it in the Jenkinsfile - https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app/-/tree/master?ref_type=heads .
+<br />
+
+**Configure Jenkins pipeline to not trigger automatically on CI build commit to avoid commit loop**
+<br />
+
+Since we have configured webhook to triger Jenkins Job every time wehen changes are committed to the application repository, it will cause that every new version bump commit will triger new Jenkins job and we will get into the infinity loop of the build. In order to prevent that scenario we installed plugin "Ignore Committer Strategy" and give it previously defined user.email in the git config in commitVersion.groovy. So when user "arim.bootcamp@gmail" commit the version. new build wonn't be triggered.
+
+![ignore-committer-strategy](ignore-committer-strategy.png)
+
+<details>
