@@ -532,6 +532,15 @@ NOTE: I had to allow GitLab on my Droplet Firewall since it wass allowed just fo
 
 After I push some changes on that project, the job was triggered and you can see job log here - [webhook-job-trigger](webhook-pipeline-job-log.txt)
 
+If we want to configure webhook trigger for Multibranch job, we'll have to install plugin "Multibranch Scan Webhook Trigger Version 1.0.11" in our Jenkins. After that in the multibranch job configuration we have to specify webhook token which will be used on GitLab side as well:
+<br />
+
+![multibranch-webhook-token](multibranch-webhook-token.png)
+![gitlab-webhook-token](gitlab-webhook-token.png)
+<br />
+
+After that webhook trigger for push event in our multibranch job works fine
+
 </details>
 
 ******
