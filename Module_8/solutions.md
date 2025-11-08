@@ -505,3 +505,33 @@ When I execute Jenkins multibranch job, I can see Docker Image version 1.4 was b
 <summary>Project: Configure Webhook to trigger CI Pipeline automatically on every change</summary>
 <br />
 
+**Install GitLab Plugin in Jenkins**
+I've installed GitLab plugin in Jenkins "GitLab Version 1.9.9" and configured it in the system:
+<br />
+
+![gitlub-plugin](gitlub-plugin.png)
+
+If we now check our pipeline Job, we'll se we have that "gitlab-connection" in the job configuration:
+<br />
+
+![gitlab-conn-job](gitlab-conn-job.png)
+
+**Configure GitLab access token and connection to Jenkins in GitLab project settings**
+Personal Access Token on GitLab has been created and configured in credentials in Jenkins"
+<br />
+
+![gitlab-pat](gitlab-pat.png)
+![cred-jenkins](cred-jenkins.png)
+
+GitLab Integration with Jenkins has also been configured:
+<br />
+
+![gitlab-jenkins-int](gitlab-jenkins-int.png)
+
+NOTE: I had to allow GitLab on my Droplet Firewall since it wass allowed just for my public IP on port 8080 !
+
+After I push some changes on that project, the job was triggered and you can see job log here - [webhook-job-trigger](webhook-pipeline-job-log.txt)
+
+</details>
+
+******
