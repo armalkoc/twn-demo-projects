@@ -406,3 +406,97 @@ I executed multibranch job and saw that build an artifact and docker build/push 
 <summary>Project: Create a Jenkins Shared Library</summary>
 <br />
 
+**Create separate Git repository for Jenkins Shared Library project**
+
+First of all, I created new repository for my Jenkins Shared Library - https://gitlab.com/twn-armin/jenkins-demo-project/demo-project-shared-library.git. 
+
+**Create functions in the JSL to use in the Jenkins pipeline**
+
+I defined functions under the vars directory for:
+- appTest.groovy (for application test stage)
+```groovy
+#!/usr/bin/env groovy
+
+def call() {
+    echo "Application Code Test"
+    sh "mvn test"
+}
+```
+- appBuild.groovy (for build Java Maven artifact .jar)
+```groovy
+#!/usr/bin/env groovy
+
+def call() {
+    echo "Build the application artifact"
+    sh "mvn clean package"
+}
+```
+- imageBuildPush (for build and push Docker Image)
+```groovy
+#!/usr/bin/env groovy
+
+def call() {
+    withCredentials([usernamePassword(credentialsId: 'dockerHub-private', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+        sh 'docker build -t amalkoc/jenkins-demo:1.4 .'
+        sh "echo $PASS | docker login -u $USER --password-stdin"
+        sh 'docker push amalkoc/jenkins-demo:1.4'
+    }
+}
+```
+After that I make my Shared Library globaly available in Jenkins:
+<br />
+
+![shared-library-scop](shared-library-scope.png)
+
+**Integrate and use the JSL in Jenkins Pipeline (globally and for a specific project in Jenkinsfile)**
+I referenced my shared library from the Jenkinsfile:
+```groovy
+@Library('demo-project-shared-library')_
+
+pipeline {
+    agent any
+    tools {
+        maven 'maven-3.9'
+    }
+
+    stages {
+        stage("Application Test") {
+            steps {
+                script {
+                    appTest()
+                }
+            }
+        }
+        stage("Application Build") {
+            when {
+                expression {
+                    BRANCH_NAME == 'master'
+                }
+            }
+            steps {
+                script {
+                    appBuild()
+                }
+            }
+        }
+        stage("Build and Push Docker Image") {
+            when {
+                expression {
+                    BRANCH_NAME == 'master'
+                }
+            }
+            steps {
+                imageBuildPush()
+            }
+        }
+    }
+}
+```
+When I execute Jenkins multibranch job, I can see Docker Image version 1.4 was build and pushed to the DockerHub private repository:
+<br />
+
+![sl-image-pushed](sl-image-pushed.png)
+
+</details>
+
+******
