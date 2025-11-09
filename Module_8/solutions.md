@@ -492,6 +492,17 @@ pipeline {
     }
 }
 ```
+
+In case it's needed to use Shared Library for a specific project we will add the following configuration in our Jenkinsfile:
+<br />
+```groovy
+library identifier: 'demo-project-shared-library@master', retriever: modernSCM(
+    [$class: GitSCMSource,
+    remote: 'https://gitlab.com/twn-armin/jenkins-demo-project/demo-project-shared-library.git',
+    credentialsID: 'gitlab-cred']
+)
+```
+
 When I execute Jenkins multibranch job, I can see Docker Image version 1.4 was build and pushed to the DockerHub private repository:
 <br />
 
