@@ -334,4 +334,19 @@ shared library - https://gitlab.com/twn-armin/jenkins-demo-project/demo-project-
 <summary>Project: Complete the CI/CD Pipeline (Docker-Compose, Dynamicversioning)</summary>
 <br />
 
+All the steps are done and you can check it using these repositories:
+
+- java-maven-app - https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app/-/tree/master?ref_type=heads
+- shared library - https://gitlab.com/twn-armin/jenkins-demo-project/demo-project-shared-library
+<br />
+
+</details>
+
+******
+
+<details>
+<summary>Project: Interacting with AWS CLI</sumary>
+<br />
+
+
 
