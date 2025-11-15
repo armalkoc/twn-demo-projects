@@ -215,6 +215,8 @@ First of all I've installed "ssh agent" plugin in Jenkins. After that I created 
 **Extend the previous CI pipeline with deploy step to ssh into the remote EC2 instance and deploy newly built image from Jenkins  server**
 <br />
 
+Jenkinsfile - https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app/-/blob/master/Jenkinsfile?ref_type=heads
+
 In my previous Jenkinsfile I added deployment step with when expression since I want to do build and deploy just for master branch:
 ```groovy
 stage("Deploy Docker Image to the AWS EC2 instance") {
