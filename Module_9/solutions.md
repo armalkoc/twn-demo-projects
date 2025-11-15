@@ -190,3 +190,66 @@ Since my security group was already configured to allow inbound traffin on port 
 
 </details>
 
+******
+
+<details>
+<summary>Project: CD - Deploy Application from Jenkins Pipeline to EC2 Instance (automatically with docker)</summary>
+<br />
+
+**Prepare AWS EC2 Instance for deployment (Install Docker)**
+
+I alredy installed Docker in previous Project:
+```sh
+[ec2-user@ip-172-31-34-132 ~]$ docker -v
+Docker version 25.0.13, build 0bab007
+```
+<br />
+
+**Create ssh key credentials for EC2 server on Jenkins**
+
+First of all I've installed "ssh agent" plugin in Jenkins. After that I created credentials using value of my .pem file for EC2 instance:
+<br />
+
+![ec2-user-key](ec2-user-key.png)
+
+**Extend the previous CI pipeline with deploy step to ssh into the remote EC2 instance and deploy newly built image from Jenkins  server**
+<br />
+
+In my previous Jenkinsfile I added deployment step with when expression since I want to do build and deploy just for master branch:
+```groovy
+stage("Deploy Docker Image to the AWS EC2 instance") {
+    when {
+        expression {
+            BRANCH_NAME == 'master'
+            }
+        }
+        steps {
+            script {
+                echo "Deploy Docker Image to AWS EC2"
+                def dockerCmd = 'docker run -d -p 8080:8080 --name maven-app amalkoc/jenkins-demo:1.1.16-14'
+                def user = 'ec2-user'
+                def srvIP = '35.158.118.115'
+                sshagent(['ec2-user-key']) {
+                    sh "ssh -o StrictHostKeyChecking=no ${user}@${srvIP} ${dockerCmd}"
+            }
+        }
+    }
+}
+```
+<br />
+
+**Configure security group on EC2 Instance to allow access to our web application**
+
+I configured my security group to enable access to my web app using port 8080:
+
+![ec2-sg-access](ec2-sg-access.png)
+<br />
+
+</details>
+
+******
+
+<details>
+<summary>Project: CD - Deploy Application from Jenkins Pipeline on EC2 Instance (automatically with docker-compose)</summary>
+<br />
+
