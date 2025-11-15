@@ -255,3 +255,82 @@ I configured my security group to enable access to my web app using port 8080:
 <summary>Project: CD - Deploy Application from Jenkins Pipeline on EC2 Instance (automatically with docker-compose)</summary>
 <br />
 
+**Install Docker Compose on AWS EC2 Instance**
+```sh
+[ec2-user@ip-172-31-34-132 ~]$ sudo curl -SL https://github.com/docker/compose/releases/download/v2.40.3/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 73.0M  100 73.0M    0     0   158M      0 --:--:-- --:--:-- --:--:--  158M
+
+[ec2-user@ip-172-31-34-132 ~]$ sudo chmod +x /usr/local/bin/docker-compose
+[ec2-user@ip-172-31-34-132 ~]$ docker-compose -v
+Docker Compose version v2.40.3
+```
+**Create docker-compose.yml file that deploys our web application image**
+
+Java-Maven Repository with all the files - https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app/-/tree/master?ref_type=heads
+
+I created following docker-compose.yaml file:
+```yaml
+version: '3'
+services:
+  maven-app:
+    image: amalkoc/jenkins-demo:$IMAGE
+    container_name: maven-app
+    ports:
+      - 8080:8080
+```
+<br />
+
+**Configure Jenkins pipeline to deploy newly built image using Docker Compose on EC2 server**
+
+I reconfigured deploy step in my Jenkisfile like this:
+```groovy
+stage("Deploy Docker Image to the AWS EC2 instance") {
+    when {
+        expression {
+            BRANCH_NAME == 'master'
+            }
+        }
+    steps {
+        script {
+            echo "Deploy Docker Image to AWS EC2"
+            //def dockerCmd = 'docker run -d -p 8080:8080 --name maven-app amalkoc/jenkins-demo:1.1.16-14'
+            def dockerCmd = "bash ./server-cmds.sh ${env.IMAGE_NAME}"
+            def user = 'ec2-user'
+            def userHome = '/home/ec2-user'
+            def srvIP = '35.158.118.115'
+            sshagent(['ec2-user-key']) {
+                sh "scp -o StrictHostKeyChecking=no server-cmds.sh ${user}@${srvIP}:${userHome}"
+                sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${user}@${srvIP}:${userHome}"
+                sh "ssh -o StrictHostKeyChecking=no ${user}@${srvIP} ${dockerCmd}"
+            }
+        }
+    }
+}
+```
+<br />
+
+**Improvement: Extract multiple Linux commands that are executed on remote server into a separate shell script and execute the script from Jenkinsfile**
+
+I created new shell script "server-cmds.sh" that is being executed from the Jenkinsfile as you can se above:
+```sh
+export IMAGE=$1
+docker-compose -f docker-compose.yaml up -d
+echo "success"
+```
+NOTE: I also extracted all the logic of deployment step from Jenkinsfile to shared library vars/appDeploy.groovy. You can find repositories here:
+
+java-maven-app - https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app/-/tree/master?ref_type=heads
+shared library - https://gitlab.com/twn-armin/jenkins-demo-project/demo-project-shared-library.git
+
+</details>
+
+******
+
+<details>
+<summary>Project: Complete the CI/CD Pipeline (Docker-Compose, Dynamicversioning)</summary>
+<br />
+
+
