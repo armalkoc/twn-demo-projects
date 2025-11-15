@@ -323,6 +323,7 @@ echo "success"
 NOTE: I also extracted all the logic of deployment step from Jenkinsfile to shared library vars/appDeploy.groovy. You can find repositories here:
 
 java-maven-app - https://gitlab.com/twn-armin/jenkins-demo-project/java-maven-app/-/tree/master?ref_type=heads
+<br />
 shared library - https://gitlab.com/twn-armin/jenkins-demo-project/demo-project-shared-library.git
 
 </details>
