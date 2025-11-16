@@ -348,5 +348,200 @@ All the steps are done and you can check it using these repositories:
 <summary>Project: Interacting with AWS CLI</sumary>
 <br />
 
+**Install and configure AWS CLI tool to connect to our AWS account**
+
+I installed AWS Client using official installation guide - https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html .
+```sh
+armin@nb-pf565v12:~$ aws --version
+aws-cli/2.31.23 Python/3.13.7 Linux/6.8.0-51-generic exe/x86_64.linuxmint.22
+```sh
+After that AWS CLI has been configured to use admin access key:
+```sharmin@nb-pf565v12:~/Downloads/aws$ ls -lrth
+total 16K
+-rw-rw-r-- 1 armin armin 110 Oct 21 16:50 admin_credentials.csv
+-rw-rw-r-- 1 armin armin  99 Oct 21 17:06 admin_accessKeys.csv
+-rw-rw-r-- 1 armin armin 116 Oct 30 10:17 armin_credentials.csv
+-rw-rw-r-- 1 armin armin 254 Oct 30 11:30 armin_acc_key.txt
+armin@nb-pf565v12:~/Downloads/aws$ aws configure list
+NAME       : VALUE                    : TYPE             : LOCATION
+profile    : <not set>                : None             : None
+access_key : ****************FLUK     : shared-credentials-file : 
+secret_key : ****************TYDs     : shared-credentials-file : 
+region     : eu-central-1             : config-file      : ~/.aws/config
+```
+<br />
+
+**Create EC2 Instance using the AWS CLI with all necessary configurations like Security Group**
+
+**Create VPC with 1 Subnet**
+
+Create VPC and retut VPC ID:
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws ec2 create-vpc --cidr-block 172.16.0.0/16 --query "Vpc.VpcId" --output text
+vpc-0f97169462ff9b16e
+```
+Create Subnet in the VPC:
+```sh 
+armin@nb-pf565v12:~/Downloads/aws$ aws ec2 create-subnet --vpc-id vpc-0f97169462ff9b16e --cidr-block 172.16.1.0/24
+{
+    "Subnet": {
+        "AvailabilityZoneId": "euc1-az2",
+        "MapCustomerOwnedIpOnLaunch": false,
+        "OwnerId": "647797471572",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": [],
+        "SubnetArn": "arn:aws:ec2:eu-central-1:647797471572:subnet/subnet-07a3270f38aafead9",
+        "EnableDns64": false,
+        "Ipv6Native": false,
+        "PrivateDnsNameOptionsOnLaunch": {
+            "HostnameType": "ip-name",
+            "EnableResourceNameDnsARecord": false,
+            "EnableResourceNameDnsAAAARecord": false
+        },
+        "SubnetId": "subnet-07a3270f38aafead9",
+        "State": "available",
+        "VpcId": "vpc-0f97169462ff9b16e",
+        "CidrBlock": "172.16.1.0/24",
+        "AvailableIpAddressCount": 251,
+        "AvailabilityZone": "eu-central-1a",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false
+    }
+}
+```
+Return Subnet ID:
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws ec2 describe-subnets --filters "Name=vpc-id,Values=vpc-0f97169462ff9b16e" --query Subnets[].SubnetId --output text
+subnet-07a3270f38aafead9
+```
+
+**Make our subnet public by attaching it internet gateway**
+
+Create internet-gateway to allow access to external network from our subnet and VPC:
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws ec2 create-internet-gateway --query InternetGateway.InternetGatewayId --output text
+igw-052a620f767b284d3
+```
+Attach internet-gateway to the vpc:
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws ec2 attach-internet-gateway --internet-gateway-id igw-052a620f767b284d3 --vpc-id vpc-0f97169462ff9b16e
+```
+Create route table for our VPC:
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws ec2 create-route-table --vpc-id vpc-0f97169462ff9b16e --query RouteTable.RouteTableId --output text
+rtb-02beebe55de7aa681
+```
+Create Route rule for handling all traffic between internet and our VPC:
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws ec2 create-route --route-table-id rtb-02beebe55de7aa681 --destination-cidr-block 0.0.0.0/0 --gateway-id igw-052a620f767b284d3
+{
+    "Return": true
+}
+```
+Valide that our custom route table has correct configuraton, 1 local and 1 interent gateway routes:
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws ec2 describe-route-tables --route-table-id rtb-02beebe55de7aa681
+{
+    "RouteTables": [
+        {
+            "Associations": [],
+            "PropagatingVgws": [],
+            "RouteTableId": "rtb-02beebe55de7aa681",
+            "Routes": [
+                {
+                    "DestinationCidrBlock": "172.16.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                },
+                {
+                    "DestinationCidrBlock": "0.0.0.0/0",
+                    "GatewayId": "igw-052a620f767b284d3",
+                    "Origin": "CreateRoute",
+                    "State": "active"
+                }
+            ],
+            "Tags": [],
+            "VpcId": "vpc-0f97169462ff9b16e",
+            "OwnerId": "647797471572"
+        }
+    ]
+}
+```
+Associate subnet with the route table we've just created to allow internet traffic in the subnet as well:
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws ec2 associate-route-table --route-table-id rtb-02beebe55de7aa681 --subnet-id subnet-07a3270f38aafead9
+{
+    "AssociationId": "rtbassoc-00639140864dc0830",
+    "AssociationState": {
+        "State": "associated"
+    }
+}
+```
+
+**Create security group in the VPC to allow access on port 22**
+
+Create Security Group:
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws ec2 create-security-group --group-name AWSDemoProject --description "Security group for AWS Demo Project" --vpc-id vpc-0f97169462ff9b16e
+{
+    "GroupId": "sg-0f10b404d26261ebd",
+    "SecurityGroupArn": "arn:aws:ec2:eu-central-1:647797471572:security-group/sg-0f10b404d26261ebd"
+}
+```
+
+Add incoming access on port 22 from all sources to security group:
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws ec2 authorize-security-group-ingress --group-id sg-0f10b404d26261ebd --protocol tcp --port 22 --cidr 0.0.0.0/0
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-025cb4c1043a3eea1",
+            "GroupId": "sg-0f10b404d26261ebd",
+            "GroupOwnerId": "647797471572",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIpv4": "0.0.0.0/0",
+            "SecurityGroupRuleArn": "arn:aws:ec2:eu-central-1:647797471572:security-group-rule/sgr-025cb4c1043a3eea1"
+        }
+    ]
+}
+```
+**Create SSH key pair**
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws ec2 create-key-pair --key-name AWSDemoProject --query "KeyMaterial" --output text >> AWSDemoProjectKeyPair.pem
+armin@nb-pf565v12:~/Downloads/aws$ chmod 400 AWSDemoProjectKeyPair.pem 
+armin@nb-pf565v12:~/Downloads/aws$ mv AWSDemoProjectKeyPair.pem ~/.ss
+.ssh/ .ssr/ 
+armin@nb-pf565v12:~/Downloads/aws$ mv AWSDemoProjectKeyPair.pem ~/.ss
+.ssh/ .ssr/ 
+armin@nb-pf565v12:~/Downloads/aws$ mv AWSDemoProjectKeyPair.pem ~/.ssh/
+armin@nb-pf565v12:~/Downloads/aws$ ls -lrth ~/.ssh/
+total 100K
+-rw------- 1 armin armin  32K Nov 13 14:21 known_hosts.old
+-rw------- 1 armin armin  32K Nov 13 14:22 known_hosts
+-r-------- 1 armin armin 1,7K Nov 16 17:02 AWSDemoProjectKeyPair.pem
+```
+
+**Create EC2 Instance**
+```sh
+aws ec2 run-instances --image-id ami-089a7a2a13629ecc4 --instance-type t3.micro --security-group-ids sg-0f10b404d26261ebd \
+--subnet-id subnet-07a3270f38aafead9 --count 1 \
+--key-name AWSDemoProject --associate-public-ip-address
+```
+
+**Create IAM resources like User, Group, Policy using the AWS CLI**
+
+
+
+
+
+
+
+
+
 
 
