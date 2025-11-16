@@ -345,8 +345,9 @@ All the steps are done and you can check it using these repositories:
 ******
 
 <details>
-<summary>Project: Interacting with AWS CLI</sumary>
+<summary>Project: Interacting with AWS CLI</summary>
 <br />
+
 
 **Install and configure AWS CLI tool to connect to our AWS account**
 
@@ -373,7 +374,7 @@ region     : eu-central-1             : config-file      : ~/.aws/config
 
 **Create EC2 Instance using the AWS CLI with all necessary configurations like Security Group**
 
-**Create VPC with 1 Subnet**
+**Create VPC with one Subnet**
 
 Create VPC and retut VPC ID:
 ```sh
