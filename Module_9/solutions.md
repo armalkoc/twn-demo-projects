@@ -532,8 +532,267 @@ aws ec2 run-instances --image-id ami-089a7a2a13629ecc4 --instance-type t3.micro 
 --subnet-id subnet-07a3270f38aafead9 --count 1 \
 --key-name AWSDemoProject --associate-public-ip-address
 ```
+We can test if our .pem key works fine and connect to the newly created EC2 instance:
+```sh 
+armin@nb-pf565v12:~/Downloads/aws$ ssh -i /home/armin/.ssh/AWSDemoProjectKeyPair.pem ec2-user@3.79.228.157
+The authenticity of host '3.79.228.157 (3.79.228.157)' can't be established.
+ED25519 key fingerprint is SHA256:vTBCDI8cWix61sXYMOnz8Qy1BIsbHyQFVCelqBuZrNw.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '3.79.228.157' (ED25519) to the list of known hosts.
+   ,     #_
+   ~\_  ####_        Amazon Linux 2023
+  ~~  \_#####\
+  ~~     \###|
+  ~~       \#/ ___   https://aws.amazon.com/linux/amazon-linux-2023
+   ~~       V~' '->
+    ~~~         /
+      ~~._.   _/
+         _/ _/
+       _/m/'
+[ec2-user@ip-172-16-1-182 ~]$
+```
 
 **Create IAM resources like User, Group, Policy using the AWS CLI**
+
+Create a new IAM user using random name with UI and CLI access:
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws iam create-user --user-name aws-demo
+{
+    "User": {
+        "Path": "/",
+        "UserName": "aws-demo",
+        "UserId": "AIDAZNU547FKMT5NKPYTP",
+        "Arn": "arn:aws:iam::647797471572:user/aws-demo",
+        "CreateDate": "2025-11-16T19:06:31+00:00"
+    }
+}
+```
+ Create group for user:
+ ```sh
+ armin@nb-pf565v12:~/Downloads/aws$ aws iam create-group --group-name aws-demo-project
+{
+    "Group": {
+        "Path": "/",
+        "GroupName": "aws-demo-project",
+        "GroupId": "AGPAZNU547FKHAJ3DEIJO",
+        "Arn": "arn:aws:iam::647797471572:group/aws-demo-project",
+        "CreateDate": "2025-11-16T19:08:15+00:00"
+    }
+}
+```
+Add user to the group:
+```sh 
+armin@nb-pf565v12:~/Downloads/aws$ aws iam add-user-to-group --user-name aws-demo --group-name aws-demo-project
+```
+We can verify newly created user and group using:
+```sh 
+armin@nb-pf565v12:~/Downloads/aws$ aws iam get-user --user-name aws-demo
+{
+    "User": {
+        "Path": "/",
+        "UserName": "aws-demo",
+        "UserId": "AIDAZNU547FKMT5NKPYTP",
+        "Arn": "arn:aws:iam::647797471572:user/aws-demo",
+        "CreateDate": "2025-11-16T19:06:31+00:00"
+    }
+}
+armin@nb-pf565v12:~/Downloads/aws$ aws iam get-group --group-name aws-demo-project
+{
+    "Users": [
+        {
+            "Path": "/",
+            "UserName": "aws-demo",
+            "UserId": "AIDAZNU547FKMT5NKPYTP",
+            "Arn": "arn:aws:iam::647797471572:user/aws-demo",
+            "CreateDate": "2025-11-16T19:06:31+00:00"
+        }
+    ],
+    "Group": {
+        "Path": "/",
+        "GroupName": "aws-demo-project",
+        "GroupId": "AGPAZNU547FKHAJ3DEIJO",
+        "Arn": "arn:aws:iam::647797471572:group/aws-demo-project",
+        "CreateDate": "2025-11-16T19:08:15+00:00"
+    }
+}
+```
+ **Give user UI and CLI access**
+
+ If we want to provide user with UI and CLI access, we will do the following:
+ - create access key 
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws iam create-access-key --user-name aws-demo > aws-demo-access-key.txt
+```
+- generate login credentials for UI
+```sh 
+armin@nb-pf565v12:~/Downloads/aws$ aws iam create-login-profile --user-name aws-demo --password MyTestPassword123 --password-reset-required
+{
+    "LoginProfile": {
+        "UserName": "aws-demo",
+        "CreateDate": "2025-11-16T19:20:12+00:00",
+        "PasswordResetRequired": true
+    }
+}
+```
+In order to be able to change password at first login, user must have permission for that:
+```sh 
+armin@nb-pf565v12:~/Downloads/aws$ aws iam list-policies | grep -i password
+"PolicyName": "IAMUserChangePassword",
+"Arn": "arn:aws:iam::aws:policy/IAMUserChangePassword",
+"PolicyName": "IAMCreateRootUserPassword",
+"Arn": "arn:aws:iam::aws:policy/root-task/IAMCreateRootUserPassword",
+
+armin@nb-pf565v12:~/Downloads/aws$ aws iam attach-user-policy --user-name aws-demo --policy-arn "arn:aws:iam::aws:policy/IAMUserChangePassword"
+```
+Now we want to assigne permissions to user through the group to be albe to access on VPC and EC2 instance:
+```sh
+armin@nb-pf565v12:~/Downloads/aws$ aws iam attach-group-policy --group-name aws-demo-project --policy-arn arn:aws:iam::aws:policy/AmazonEC2FullAccess
+armin@nb-pf565v12:~/Downloads/aws$ aws iam attach-group-policy --group-name aws-demo-project --policy-arn arn:aws:iam::aws:policy/AmazonVPCFullAccess
+```
+Check policies for the group aws-demo-project:
+```sh 
+armin@nb-pf565v12:~/Downloads/aws$ aws iam list-attached-group-policies --group-name aws-demo-project
+{
+    "AttachedPolicies": [
+        {
+            "PolicyName": "AmazonEC2FullAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+        },
+        {
+            "PolicyName": "AmazonVPCFullAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
+        }
+    ]
+}
+```
+**List and browse AWS resources using the AWS CLI**
+
+We can list all the users and groups using the following commands:
+```sh 
+armin@nb-pf565v12:~/Downloads/aws$ aws iam list-users 
+{
+    "Users": [
+        {
+            "Path": "/",
+            "UserName": "admin",
+            "UserId": "AIDAZNU547FKFSMWM3TJK",
+            "Arn": "arn:aws:iam::647797471572:user/admin",
+            "CreateDate": "2025-10-21T14:49:56+00:00",
+            "PasswordLastUsed": "2025-11-16T13:55:00+00:00"
+        },
+        {
+            "Path": "/",
+            "UserName": "armin",
+            "UserId": "AIDAZNU547FKGNHE4WSKZ",
+            "Arn": "arn:aws:iam::647797471572:user/armin",
+            "CreateDate": "2025-10-30T09:16:11+00:00",
+            "PasswordLastUsed": "2025-10-31T06:55:01+00:00"
+        },
+        {
+            "Path": "/",
+            "UserName": "aws-demo",
+            "UserId": "AIDAZNU547FKMT5NKPYTP",
+            "Arn": "arn:aws:iam::647797471572:user/aws-demo",
+            "CreateDate": "2025-11-16T19:06:31+00:00"
+        },
+        {
+            "Path": "/",
+            "UserName": "MyUserCli",
+            "UserId": "AIDAZNU547FKPFL5JRRLC",
+            "Arn": "arn:aws:iam::647797471572:user/MyUserCli",
+            "CreateDate": "2025-10-29T10:57:47+00:00",
+            "PasswordLastUsed": "2025-10-29T11:32:22+00:00"
+        }
+    ]
+}
+armin@nb-pf565v12:~/Downloads/aws$ aws iam list-groups
+{
+    "Groups": [
+        {
+            "Path": "/",
+            "GroupName": "aws-demo-project",
+            "GroupId": "AGPAZNU547FKHAJ3DEIJO",
+            "Arn": "arn:aws:iam::647797471572:group/aws-demo-project",
+            "CreateDate": "2025-11-16T19:08:15+00:00"
+        },
+        {
+            "Path": "/",
+            "GroupName": "devops",
+            "GroupId": "AGPAZNU547FKCOIPQ6S3Q",
+            "Arn": "arn:aws:iam::647797471572:group/devops",
+            "CreateDate": "2025-10-30T09:14:46+00:00"
+        },
+        {
+            "Path": "/",
+            "GroupName": "MyGroupCli",
+            "GroupId": "AGPAZNU547FKHZSUSTMOT",
+            "Arn": "arn:aws:iam::647797471572:group/MyGroupCli",
+            "CreateDate": "2025-10-29T10:55:50+00:00"
+        }
+    ]
+}
+```
+If we want to get info about specific user or group, we will use the following command:
+```sh 
+armin@nb-pf565v12:~/Downloads/aws$ aws iam get-group --group-name aws-demo-project
+{
+    "Users": [
+        {
+            "Path": "/",
+            "UserName": "aws-demo",
+            "UserId": "AIDAZNU547FKMT5NKPYTP",
+            "Arn": "arn:aws:iam::647797471572:user/aws-demo",
+            "CreateDate": "2025-11-16T19:06:31+00:00"
+        }
+    ],
+    "Group": {
+        "Path": "/",
+        "GroupName": "aws-demo-project",
+        "GroupId": "AGPAZNU547FKHAJ3DEIJO",
+        "Arn": "arn:aws:iam::647797471572:group/aws-demo-project",
+        "CreateDate": "2025-11-16T19:08:15+00:00"
+    }
+}
+armin@nb-pf565v12:~/Downloads/aws$ aws iam get-user --user-name aws-demo
+{
+    "User": {
+        "Path": "/",
+        "UserName": "aws-demo",
+        "UserId": "AIDAZNU547FKMT5NKPYTP",
+        "Arn": "arn:aws:iam::647797471572:user/aws-demo",
+        "CreateDate": "2025-11-16T19:06:31+00:00"
+    }
+}
+```
+In order to see policies assigned to the user or group we will use following commands:
+```sh 
+armin@nb-pf565v12:~/Downloads/aws$ aws iam list-attached-user-policies --user-name aws-demo
+{
+    "AttachedPolicies": [
+        {
+            "PolicyName": "IAMUserChangePassword",
+            "PolicyArn": "arn:aws:iam::aws:policy/IAMUserChangePassword"
+        }
+    ]
+}
+armin@nb-pf565v12:~/Downloads/aws$ aws iam list-attached-group-policies --group-name aws-demo-project
+{
+    "AttachedPolicies": [
+        {
+            "PolicyName": "AmazonEC2FullAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+        },
+        {
+            "PolicyName": "AmazonVPCFullAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
+        }
+    ]
+}
+```
+</details>
+
+
 
 
 
