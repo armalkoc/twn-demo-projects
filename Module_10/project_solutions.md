@@ -96,7 +96,40 @@ drwxr-xr-x    2 mosquitto mosquitto    4.0K Feb  5 17:54 log
 drwxr-xr-x    2 mosquitto mosquitto    4.0K Feb  5 17:54 data
 drwxr-xr-x    1 mosquitto mosquitto    4.0K Feb  5 17:54 config
 ```
-So we can see that all mosquitto configuration, logs, data etc. are stored in the /mosquitto directory. So lets create Secret and ConfigMap configuration files for mosquitto and mount these files as volumes in the mosquitto Deployment.
+So we can see that all mosquitto configuration, logs, data etc. are stored in the /mosquitto directory. So lets create Secret and ConfigMap configuration files for mosquitto and mount these files as volumes in the mosquitto Deployment. All those configuration files you can find here - https://github.com/armalkoc/twn-demo-projects/tree/master/Module_10/demo_2 . 
+After mosquitto-config-file and mosquitto-secret-file were created, we have created mosquitto deployment and now we can see that we have it running:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10$ kubectl get secret | grep -i mosquitto
+mosquitto-secret-file                    Opaque                           1      7m
+armin@nb-pf565v12:~/twn-demo-projects/Module_10$ kubectl get configMap | grep -i mosquitto
+mosquitto-config-file           1      10m
+armin@nb-pf565v12:~/twn-demo-projects/Module_10$ kubectl get pods | grep -i mosquitto
+mosquitto-849db7d468-d6dvm                  1/1     Running                      0             3m18s
+armin@nb-pf565v12:~/twn-demo-projects/Module_10$ kubectl get deployment | grep -i mosquitto
+mosquitto                  1/1     1            1           3m23s
+```
+When we enter inside the mosquitto container we can see our configuration and secret files as they should be:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10$ kubectl exec -it mosquitto-849db7d468-d6dvm -- sh
+/ # cd mosquitto
+/mosquitto # ls -lrth
+total 12K    
+drwxr-xr-x    2 mosquitto mosquitto    4.0K Feb  5 17:54 log
+drwxr-xr-x    2 mosquitto mosquitto    4.0K Feb  5 17:54 data
+drwxrwxrwt    3 root     root         100 Mar 12 23:53 secret
+drwxrwxrwx    3 root     root        4.0K Mar 12 23:53 config
+/mosquitto # cat config/mosquitto.conf 
+log_dest stdout
+log_type all
+log_timestamp true
+listener 9001
+/mosquitto # cat secret/secret.file 
+TechWorld2023! -n/mosquitto # 
+```
+<br />
+
+</details>
+
 
 
 
