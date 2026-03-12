@@ -69,7 +69,7 @@ armin@nb-pf565v12:~/twn-demo-projects/Module_10$ minikube service mongo-express-
 Now I'm able to access to the mongo-express UI through my web browser:
 <br />
 
-![mongo-express-UI](mongo-express-UI.png)
+![mongo-express-UI](./demo_1/mongo-express-UI.png)
 <br />
 </details>
 
