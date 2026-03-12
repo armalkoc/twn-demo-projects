@@ -82,9 +82,21 @@ Now I'm able to access to the mongo-express UI through my web browser:
 **Define configuration and passwords for Mosquitto message broker with ConfigMap and Secret Volume types**
 
 In order to properly being started some applications need some configuration parameters during the starting process. These parameters can be e.g. log directory, sensitive data like passwords and usernames, configuration data like database url etc.
-To be able to understand the whole topic, we started mosquitto Pod without any volumes, and found configuration directory.
+To be able to understand the whole topic, we started mosquitto Pod without any volumes, and found configuration directory. Deployment file can be found here - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_2/mosquitto-without-volumes.yaml
 ```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_2$ kubectl apply -f mosquitto-without-volumes.yaml 
+deployment.apps/mosquitto created
 
+/mosquitto/config # pwd
+/mosquitto/config
+/mosquitto/config # cd ..
+/mosquitto # ls -lrth
+total 16K    
+drwxr-xr-x    2 mosquitto mosquitto    4.0K Feb  5 17:54 log
+drwxr-xr-x    2 mosquitto mosquitto    4.0K Feb  5 17:54 data
+drwxr-xr-x    1 mosquitto mosquitto    4.0K Feb  5 17:54 config
+```
+So we can see that all mosquitto configuration, logs, data etc. are stored in the /mosquitto directory. So lets create Secret and ConfigMap configuration files for mosquitto and mount these files as volumes in the mosquitto Deployment.
 
 
 
