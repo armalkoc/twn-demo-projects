@@ -15,19 +15,19 @@ spec:
         app: mosquitto 
     spec: 
       containers:
-      - name: mosquitto 
-        image: eclipse-mosquitto:2.0 
-        ports:
-        - containerPort: 1883
-        volumeMounts:
-        - name: mosquitto-config 
-          mountPath: /mosquitto/config
-        - name: mosquitto-secret 
-          mountPath: /mosquitto/secret
-      Volumes:
-      - name: mosquitto-config
-        configMap: 
-          name: mosquitto-config-file
-      - name: mosquitto-secret
-        secret: 
-          name: mosquitto-secret-file
+        - name: mosquitto 
+          image: eclipse-mosquitto:2.0 
+          ports:
+          - containerPort: 1883
+          volumeMounts:
+            - name: mosquitto-config 
+              mountPath: /mosquitto/config
+            - name: mosquitto-secret 
+              mountPath: /mosquitto/secret
+      volumes:
+        - name: mosquitto-config
+          configMap: 
+            name: mosquitto-config-file
+        - name: mosquitto-secret
+          secret: 
+            secretName: mosquitto-secret-file
