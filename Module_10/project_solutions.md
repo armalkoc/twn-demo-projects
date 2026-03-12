@@ -31,3 +31,7 @@ armin@nb-pf565v12:~$ minikube start --driver=docker
     ▪ Want kubectl v1.34.0? Try 'minikube kubectl -- get pods -A'
 🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
 ```
+<br />
+
+**Deploy MongoDB and MongoExpress with configuration and credentials extracted into ConfigMap and Secret**
+
