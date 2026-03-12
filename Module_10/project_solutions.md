@@ -35,11 +35,11 @@ armin@nb-pf565v12:~$ minikube start --driver=docker
 
 **Deploy MongoDB and MongoExpress with configuration and credentials extracted into ConfigMap and Secret**
 
-NOTE: all the configuration files can be found in this repository - https://github.com/armalkoc/twn-demo-projects/tree/master/Module_10
+NOTE: all the configuration files can be found in this repository - https://github.com/armalkoc/twn-demo-projects/tree/master/Module_10/demo_1
 
-In order to create and start mongodb Pod, I created db-secret.yaml file with the needed variables - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/db-secret.yaml .
+In order to create and start mongodb Pod, I created db-secret.yaml file with the needed variables -  https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_1/db-secret.yaml.
 
-After that I created deployment and service configuration for the mongodb - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/mongodb-deployment.yaml
+After that I created deployment and service configuration for the mongodb - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_1/mongodb-deployment.yaml
 
 At the end we can see our secret and mongodb Pod sucessfully created:
 ```sh
@@ -50,7 +50,7 @@ armin@nb-pf565v12:~/twn-demo-projects/Module_10$ kubectl get deployment | grep -
 mongodb-deployment                          1/1     1            1           13m
 mongodb-deployment-7cb7596479-2r7fl         1/1     Running      0           13m
 ```
-Now it's needed to create mongo-express deployment and config as well since mongo-express needs mongo database server as a variable. Config file was created https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/db-config.yaml and also both, deployment and service for mongo-express were created https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/mongo-express-deployment.yaml.
+Now it's needed to create mongo-express deployment and config as well since mongo-express needs mongo database server as a variable. Config file was created https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_1/db-config.yaml and also both, deployment and service for mongo-express were created https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_1/mongo-express-deployment.yaml.
 After that we can see:
 ```sh
 armin@nb-pf565v12:~/twn-demo-projects/Module_10$ kubectl get deployment | grep -i mongo- && kubectl get pods | grep -i mongo- 
