@@ -81,6 +81,10 @@ Now I'm able to access to the mongo-express UI through my web browser:
 
 **Define configuration and passwords for Mosquitto message broker with ConfigMap and Secret Volume types**
 
+In order to properly being started some applications need some configuration parameters during the starting process. These parameters can be e.g. log directory, sensitive data like passwords and usernames, configuration data like database url etc.
+To be able to understand the whole topic, we started mosquitto Pod without any volumes, and found configuration directory.
+```sh
+
 
 
 
