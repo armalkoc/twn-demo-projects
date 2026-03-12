@@ -46,7 +46,7 @@ spec:
   selector:
     app: mongo-express 
   ports:
-  - protocol: tcp 
+  - protocol: TCP
     port: 8087
     targetPort: 8081
     nodePort: 30001
