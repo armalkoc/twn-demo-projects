@@ -73,4 +73,14 @@ Now I'm able to access to the mongo-express UI through my web browser:
 <br />
 </details>
 
+******
+
+<details>
+<summary>Deploy Mosquitto message broker with ConfigMap and Secret Volume Types</summary>
+<br />
+
+**Define configuration and passwords for Mosquitto message broker with ConfigMap and Secret Volume types**
+
+
+
 
