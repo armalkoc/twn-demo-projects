@@ -136,6 +136,132 @@ TechWorld2023! -n/mosquitto #
 <summary>Install a stateful service (MongoDB) on Kubernetes using Helm</summary>
 <br />
 
+I have created my own K8s cluster with Linode Kubernetes Engine:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ kubectl cluster-info
+Kubernetes control plane is running at https://be090efd-6c44-4137-9c6c-e17f2173cc79.eu-central-3-gw.linodelke.net:443
+KubeDNS is running at https://be090efd-6c44-4137-9c6c-e17f2173cc79.eu-central-3-gw.linodelke.net:443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ kubectl get nodes -o wide
+NAME                            STATUS   ROLES    AGE     VERSION   INTERNAL-IP       EXTERNAL-IP      OS-IMAGE                         KERNEL-VERSION         CONTAINER-RUNTIME
+lke580035-847968-487324350000   Ready    <none>   7h20m   v1.35.1   192.168.134.158   172.105.246.35   Debian GNU/Linux 12 (bookworm)   6.1.0-43-cloud-amd64   containerd://2.2.1
+lke580035-847968-55c61df10000   Ready    <none>   7h20m   v1.35.1   192.168.134.88    172.105.246.64   Debian GNU/Linux 12 (bookworm)   6.1.0-43-cloud-amd64   containerd://2.2.1
+```
+
+After Linide K8s cluster had been created, I added bitnami helm repository and and created my own values file with data persistece configuration inside.
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ helm repo ls | grep -i bitnami
+bitnami                 https://charts.bitnami.com/bitnami                                         
+bitnami-full-index      https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+```
+Values file can be found here - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_3/mongodb-chart-values.yaml.
+
+Since I have prepared everything what is needed, mongodb can be installed using Helm:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ helm install mongodb bitnami/mongodb -f mongodb-chart-values.yaml
+```
+Now we can see mongodb stateful Pods:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ kubectl get pods
+NAME                             READY   STATUS    RESTARTS   AGE
+mongodb-0                        1/1     Running   0          6h46m
+mongodb-1                        1/1     Running   0          6h45m
+mongodb-2                        1/1     Running   0          6h44m
+mongodb-arbiter-0                1/1     Running   0          6h46m
+```
+
+In order to deploy mongo-express we need credentials for our mongo database and also URL of our mongo dataase. For that reason we've created mongodb-secret.yaml and mongodb-config.yaml files and these files can be found here https://github.com/armalkoc/twn-demo-projects/tree/master/Module_10/demo_3 . Secret and configMap have been created using these files:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ kubectl get secret
+NAME                            TYPE                 DATA   AGE
+mongodb                         Opaque               2      6h49m
+mongodb-secret                  Opaque               2      6h25m
+sh.helm.release.v1.mongodb.v1   helm.sh/release.v1   1      6h49m
+
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ kubectl get configMap
+NAME                     DATA   AGE
+kube-root-ca.crt         1      7h30m
+mongodb-common-scripts   3      6h50m
+mongodb-config           1      6h21m
+mongodb-scripts          2      6h50m
+```
+Mongo-express deployment and service were written and deployed as well. Deployment and service configuration can be found here https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_3/mongo-express.yaml .
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ kubectl get deployment
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+mongo-express   2/2     2            2           6h23m
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ kubectl get svc
+NAME                       TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)          AGE
+kubernetes                 ClusterIP      10.128.0.1       <none>           443/TCP          7h32m
+mongo-express-service      LoadBalancer   10.128.221.238   143.42.221.149   8081:30000/TCP   6h27m
+mongodb-arbiter-headless   ClusterIP      None             <none>           27017/TCP        6h51m
+mongodb-headless           ClusterIP      None             <none>           27017/TCP        6h51m
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ kubectl get pods | grep express
+mongo-express-6ffbb59598-99tmv   1/1     Running   0          6h23m
+mongo-express-6ffbb59598-nzdz2   1/1     Running   0          6h23m
+```
+I installed ingres-nginx controller using following command:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ helm install ingress-nginx ingress-nginx/ingress-nginx
+NAME: ingress-nginx
+LAST DEPLOYED: Sat Mar 14 23:34:12 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+The ingress-nginx controller has been installed.
+It may take a few minutes for the load balancer IP to be available.
+You can watch the status by running 'kubectl get service --namespace default ingress-nginx-controller --output wide --watch'
+``` 
+We can see ingress-nginx Pod, svc etc.:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ kubectl get pods
+NAME                                        READY   STATUS    RESTARTS   AGE
+ingress-nginx-controller-579c674b5d-5nlgm   1/1     Running   0          3m26s
+mongo-express-6ffbb59598-99tmv              1/1     Running   0          6h31m
+mongo-express-6ffbb59598-nzdz2              1/1     Running   0          6h31m
+mongodb-0                                   1/1     Running   0          6h59m
+mongodb-1                                   1/1     Running   0          6h58m
+mongodb-2                                   1/1     Running   0          6h57m
+mongodb-arbiter-0                           1/1     Running   0          6h59m
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ kubectl get svc
+NAME                                 TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)                      AGE
+ingress-nginx-controller             LoadBalancer   10.128.215.148   143.42.223.140   80:30488/TCP,443:30755/TCP   3m36s
+ingress-nginx-controller-admission   ClusterIP      10.128.222.217   <none>           443/TCP                      3m36s
+kubernetes                           ClusterIP      10.128.0.1       <none>           443/TCP                      7h41m
+mongo-express-service                LoadBalancer   10.128.221.238   143.42.221.149   8081:30000/TCP               6h35m
+mongodb-arbiter-headless             ClusterIP      None             <none>           27017/TCP                    6h59m
+mongodb-headless                     ClusterIP      None             <none>           27017/TCP                    6h59m
+```
+Ingres rule has been created https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_3/mongo-express-ingress.yaml and I added this line in my /etc/hosts file:
+```sh
+143.42.223.140  mongo-exp.com
+```
+This IP is actually External IP address of our ingress-controller which point to our mongo-express-service (LoadBalancer type) and it hits to the targetPort 8081.
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ kubectl get svc | grep -iE "ingress|express"
+ingress-nginx-controller             LoadBalancer   10.128.215.148   143.42.223.140   80:30488/TCP,443:30755/TCP   31m
+ingress-nginx-controller-admission   ClusterIP      10.128.222.217   <none>           443/TCP                      31m
+mongo-express-service                LoadBalancer   10.128.221.238   143.42.221.149   8081:30000/TCP               7h2m
+```
+If we test if our ingress setup works fine, we'll execute curl command:
+```
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_3$ curl -I -u admin:pass http://mongo-exp.com
+HTTP/1.1 200 OK
+Date: Sat, 14 Mar 2026 23:07:48 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 9262
+Connection: keep-alive
+X-Powered-By: Express
+ETag: W/"242e-TJ777WydHHHT91/II1Dq0D++60M"
+Set-Cookie: mongo-express=s%3AWbFZlCqoTuHH2Gu-nUGx6u90r6XBAVQ_.%2FRtNKK%2FQSI5oHyDWPmMgYuWeM0viV0ljTPTSHJVLlB8; Path=/; HttpOnly
+```
+From the above output we can see that our ingress works fine.
+
+
+
 
 
 
