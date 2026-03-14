@@ -1,0 +1,20 @@
+architecture: replicaset
+replicaCount: 3
+useStatefulSet: true 
+
+auth:
+  enabled: true
+  rootUser: armin
+  rootPassword: armin123
+
+resources:
+  requests: 
+    cpu: 300m
+    memory: 356Mi
+
+persistence:
+  enabled: true
+  storageClass: linode-block-storage
+  accessModes: 
+    - ReadWriteOnce
+  size: 10Gi
