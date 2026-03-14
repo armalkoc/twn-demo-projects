@@ -259,6 +259,16 @@ ETag: W/"242e-TJ777WydHHHT91/II1Dq0D++60M"
 Set-Cookie: mongo-express=s%3AWbFZlCqoTuHH2Gu-nUGx6u90r6XBAVQ_.%2FRtNKK%2FQSI5oHyDWPmMgYuWeM0viV0ljTPTSHJVLlB8; Path=/; HttpOnly
 ```
 From the above output we can see that our ingress works fine.
+<br />
+
+</details>
+
+*******
+
+<details>
+<summary>Deploy our web application in K8s cluster from private Docker registry</summary>
+<br />
+
 
 
 
