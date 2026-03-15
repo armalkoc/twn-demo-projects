@@ -289,7 +289,34 @@ mongodb-secret                        Opaque                           2      20
 sh.helm.release.v1.ingress-nginx.v1   helm.sh/release.v1               1      13h
 sh.helm.release.v1.mongodb.v1         helm.sh/release.v1               1      20h
 ```
-This "demo-4-registry" can be used in the Deployment by imagePullSecrets parameter and you can find Deployment configuration here 
+This "demo-4-registry" can be used in the Deployment by imagePullSecrets parameter and you can find Deployment configuration here https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_4/node-app-deployment.yaml .
+
+Let's deploy our node-app to the Linode k8s cluster using our private docker-registry:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_4$ kubectl apply -f node-app-deployment.yaml 
+deployment.apps/node-app created
+
+armin@nb-pf565v12:~/twn-demo-projects/Module_10$ kubectl get deployment | grep node
+node-app                   2/2     2            2           9m9s
+armin@nb-pf565v12:~/twn-demo-projects/Module_10$ kubectl get pods | grep node
+node-app-74857dcb8f-rb82n                   1/1     Running   0          9m13s
+node-app-74857dcb8f-tq8mx                   1/1     Running   0          9m13s
+```
+NOTE: Secret registry could be created using the following command as well:
+```sh
+armin@nb-pf565v12:~$ kubectl create secret generic demo-4-registry-file --from-file=..dockerconfigjson=.docker/config.json \
+> --type=kubernetes.io/dockerconfigjson
+```
+If we plan to use more registries where we plan to pull images from than this 2nd way is better solutions. If we need specific registry where we need to pull images from then 1st solution is better.
+<br />
+</details>
+
+*******
+
+<details>
+<summary>Deploy Microservices application in Kubernetes with Production & Security Best Practices</summary>
+<br />
+
 
 
 
