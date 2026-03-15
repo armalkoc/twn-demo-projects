@@ -268,6 +268,28 @@ From the above output we can see that our ingress works fine.
 <details>
 <summary>Deploy our web application in K8s cluster from private Docker registry</summary>
 <br />
+ 
+ My NodeJS application artifact was stored in the DockerHub private repository. First of all I'll do 'docker login' command that will create ~/.docker/config.json file with stored credentials:
+ ```sh
+ armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_4$ ls -la ~/.docker/config.json 
+-rw------- 1 armin armin 4310 Mar  9 12:56 /home/armin/.docker/config.json
+```
+After that I'll create my secret key (docker-registry) using the following command:
+```sh
+armin@nb-pf565v12:~$ kubectl create secret docker-registry demo-4-registry \
+> --docker-username=<my-username> \
+> --docker-password=<my-password> 
+secret/demo-4-registry created
+armin@nb-pf565v12:~$ kubectl get secret
+NAME                                  TYPE                             DATA   AGE
+demo-4-registry                       kubernetes.io/dockerconfigjson   1      5s
+ingress-nginx-admission               Opaque                           3      13h
+mongodb                               Opaque                           2      20h
+mongodb-secret                        Opaque                           2      20h
+sh.helm.release.v1.ingress-nginx.v1   helm.sh/release.v1               1      13h
+sh.helm.release.v1.mongodb.v1         helm.sh/release.v1               1      20h
+```
+This "demo-4-registry" can be used in the Deployment by imagePullSecrets parameter and you can find Deployment configuration here 
 
 
 
