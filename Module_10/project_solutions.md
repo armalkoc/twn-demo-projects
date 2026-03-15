@@ -170,6 +170,10 @@ mongodb-1                        1/1     Running   0          6h45m
 mongodb-2                        1/1     Running   0          6h44m
 mongodb-arbiter-0                1/1     Running   0          6h46m
 ```
+Storage volumens are visable as well:
+<br />
+![storage_volumes_mongodb](./demo_3/storage_volumes_mongodb.png)
+<br />
 
 In order to deploy mongo-express we need credentials for our mongo database and also URL of our mongo dataase. For that reason we've created mongodb-secret.yaml and mongodb-config.yaml files and these files can be found here https://github.com/armalkoc/twn-demo-projects/tree/master/Module_10/demo_3 . Secret and configMap have been created using these files:
 ```sh
