@@ -14,26 +14,26 @@ spec:
     spec: 
       containers:
       - name: service
-        image: gcr.io/google-samples/microservices-demo/emailservice:v0.10.5
+        image: gcr.io/google-samples/microservices-demo/emailservice:v0.8.0
         ports:
         - containerPort: 8080
         env:
         - name: PORT 
           value: "8080"
-        livenessProbe:
-          grpc:  # this is the protocol and it can be http, https or other 
-            port: 8080
-          periodSeconds: 5
-        readinessProbe:
-          grpc: 
-            port: 8080
-          periodSeconds: 5
+#        livenessProbe:
+#          grpc:  # this is the protocol and it can be http, https or other 
+#            port: 8080
+#          periodSeconds: 5
+#        readinessProbe:
+#          grpc: 
+#            port: 8080
+#          periodSeconds: 5
         resources:
           requests:
             cpu: 100m
             memory: 64Mi
           limits:
-            cpu: 200,
+            cpu: 200
             memory: 128Mi
 ---
 apiVersion: v1  
@@ -66,7 +66,7 @@ spec:
     spec: 
       containers:
       - name: paymentservice
-        image: gcr.io/google-samples/microservices-demo/paymentservice:v0.10.5
+        image: gcr.io/google-samples/microservices-demo/paymentservice:v0.8.0
         ports:
         - containerPort: 50051
         env:
@@ -113,14 +113,14 @@ spec:
     spec: 
       containers: 
       - name: checkoutservice 
-        image: gcr.io/google-samples/microservices-demo/checkoutservice:v0.10.5
+        image: gcr.io/google-samples/microservices-demo/checkoutservice:v0.8.0
         ports: 
         - containerPort: 5050 
         env:
         - name: PORT 
-          value: "50051"
+          value: "5050"
         - name: PRODUCT_CATALOG_SERVICE_ADDR
-          velue: "productcatalogservice:3550"
+          value: "productcatalogservice:3550"
         - name: SHIPPING_SERVICE_ADDR
           value: "shippingservice:50051"
         - name: PAYMENT_SERVICE_ADDR
@@ -171,7 +171,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.10.5
+        image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.8.0
         ports:
         - containerPort: 8080
         env:
@@ -221,7 +221,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.10.5
+        image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.8.0
         ports:
         - containerPort: 3550
         env:
@@ -252,7 +252,7 @@ spec:
     port: 3550
     targetPort: 3550
 
-   ---
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -269,7 +269,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: gcr.io/google-samples/microservices-demo/currencyservice:v0.10.5
+        image: gcr.io/google-samples/microservices-demo/currencyservice:v0.8.0
         ports:
         - containerPort: 7000
         env:
@@ -300,7 +300,7 @@ spec:
     port: 7000
     targetPort: 7000
 
-     ---
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -317,7 +317,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: gcr.io/google-samples/microservices-demo/shippingservice:v0.10.5
+        image: gcr.io/google-samples/microservices-demo/shippingservice:v0.8.0
         ports:
         - containerPort: 50051
         env:
@@ -362,7 +362,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: gcr.io/google-samples/microservices-demo/adservice:v0.10.5
+        image: gcr.io/google-samples/microservices-demo/adservice:v0.8.0
         ports:
         - containerPort: 9555
         env:
@@ -398,7 +398,7 @@ spec:
     port: 9555
     targetPort: 9555
 
-   ---
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -415,7 +415,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: gcr.io/google-samples/microservices-demo/cartservice:v0.10.5
+        image: gcr.io/google-samples/microservices-demo/cartservice:v0.8.0
         ports:
         - containerPort: 7070
         env:
@@ -448,7 +448,7 @@ spec:
     port: 7070
     targetPort: 7070
 
- ---
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -522,7 +522,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: gcr.io/google-samples/microservices-demo/frontend:v0.10.5
+        image: gcr.io/google-samples/microservices-demo/frontend:v0.8.0
         ports:
         - containerPort: 8080
         env:
