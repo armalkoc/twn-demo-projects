@@ -321,6 +321,73 @@ If we plan to use more registries where we plan to pull images from than this 2n
 <summary>Deploy Microservices application in Kubernetes with Production & Security Best Practices</summary>
 <br />
 
+First off all I read the documentation in the followin URL - https://github.com/GoogleCloudPlatform/microservices-demo . 
+
+After that I created my Linode K8s cluster called microservics-cluster. In next step I created manifest file for Deployment and Service configuration of all microservices and you can find it here - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_5/microservices-config.yaml .
+
+At the end I deployed all the microservices using this manifest file
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_5$ kubectl get pods
+NAME                                     READY   STATUS    RESTARTS      AGE
+adservice-66ff9975bc-bjsqd               1/1     Running   0             5m15s
+adservice-66ff9975bc-jctfs               1/1     Running   0             5m15s
+cartservice-7b846c5895-5kc4h             1/1     Running   0             5m14s
+cartservice-7b846c5895-j9jfg             1/1     Running   0             5m14s
+checkoutservice-57676d65b5-d5bqc         0/1     Running   0             8s
+currencyservice-5b4b4c9bd4-85mql         1/1     Running   0             5m15s
+currencyservice-5b4b4c9bd4-kst68         1/1     Running   0             5m15s
+emailservice-6cf9b69c9d-7pr6s            1/1     Running   2 (31s ago)   2m2s
+frontend-5f8d9468f4-lw5g5                1/1     Running   0             5m14s
+frontend-5f8d9468f4-q4rtn                1/1     Running   0             5m14s
+paymentservice-7c689745c8-nftfr          1/1     Running   0             5m15s
+productcatalogservice-594bc59f78-bgvg5   1/1     Running   0             5m15s
+productcatalogservice-594bc59f78-zjgsl   1/1     Running   0             5m15s
+recommendationservice-f86c5884b-pcfvt    1/1     Running   0             5m15s
+recommendationservice-f86c5884b-pp7jd    1/1     Running   0             5m15s
+redis-cart-d45dfffc4-q9x2k               1/1     Running   0             5m14s
+redis-cart-d45dfffc4-trtft               1/1     Running   0             5m14s
+shippingservice-6cb96df4c8-bjrx9         1/1     Running   0             5m15s
+shippingservice-6cb96df4c8-jchzz         1/1     Running   0             5m15s
+```
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_5$ kubectl get deployment
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
+adservice               2/2     2            2           20m
+cartservice             2/2     2            2           20m
+checkoutservice         1/1     1            1           11m
+currencyservice         2/2     2            2           20m
+emailservice            1/1     1            1           14m
+frontend                2/2     2            2           20m
+paymentservice          1/1     1            1           20m
+productcatalogservice   2/2     2            2           20m
+recommendationservice   2/2     2            2           20m
+redis-cart              2/2     2            2           20m
+shippingservice         2/2     2            2           20m
+```
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_5$ kubectl get svc
+NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)        AGE
+adservice               ClusterIP      10.128.188.72    <none>           9555/TCP       29m
+cartservice             ClusterIP      10.128.162.187   <none>           7070/TCP       29m
+checkoutservice         ClusterIP      10.128.227.18    <none>           5050/TCP       31m
+currencyservice         ClusterIP      10.128.95.148    <none>           7000/TCP       29m
+emailservice            ClusterIP      10.128.159.96    <none>           5000/TCP       31m
+frontend                LoadBalancer   10.128.126.117   143.42.221.158   80:30429/TCP   29m
+kubernetes              ClusterIP      10.128.0.1       <none>           443/TCP        88m
+paymentservice          ClusterIP      10.128.133.139   <none>           50051/TCP      31m
+productcatalogservice   ClusterIP      10.128.116.216   <none>           3550/TCP       29m
+recommendationservice   ClusterIP      10.128.69.107    <none>           8080/TCP       31m
+redis-cart              ClusterIP      10.128.194.152   <none>           6379/TCP       29m
+shippingservice         ClusterIP      10.128.26.133    <none>           50051/TCP      29m
+```
+<br />
+</details>
+
+*******
+
+<details>
+<summary>Create Helm Chart for Microservices</summary>
+<br />
 
 
 
