@@ -9,4 +9,3 @@ containerEnvVars:
   - name: VAR_TWO 
     value: "valueteo"
 servicePort: 8080
-serviceType: LoadBalancer
