@@ -389,6 +389,21 @@ shippingservice         ClusterIP      10.128.26.133    <none>           50051/T
 <summary>Create Helm Chart for Microservices</summary>
 <br />
 
+First of all I created new helm chart for microservices called **microservices-helm-chart** . After that I deleted all the files from the template directory and create my own files, Deployment and Service configuration files. Since we have almost the same Deployment and Service configuration for all microservices, it mens we can use these files as a template files. To pass specific values for every single microservice,we'll create new dir called **values** and store all the custom values files for every single microservice there. You can have a look at this microservice chart here - https://github.com/armalkoc/twn-demo-projects/tree/master/Module_10/demo_5/microservices-helm-chart .
+
+I created helm-chart for Redis with values file as well - https://github.com/armalkoc/twn-demo-projects/tree/master/Module_10/demo_5/redis-chart .
+<br />
+</details>
+
+*******
+
+<details>
+<summary>Deploy Microservices with Helmfile</summary>
+<br />
+
+
+
+
 
 
 
