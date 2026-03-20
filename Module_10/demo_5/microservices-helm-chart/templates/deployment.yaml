@@ -18,3 +18,7 @@ spec:
         ports:
         - containerPort: 
         env:
+        {{-range .Values.containerEnvVars}}
+          - name: {{ .key }}
+            value: {{ .value | quote }}
+        {{-end }}
