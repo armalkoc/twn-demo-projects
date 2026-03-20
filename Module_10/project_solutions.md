@@ -401,6 +401,134 @@ I created helm-chart for Redis with values file as well - https://github.com/arm
 <summary>Deploy Microservices with Helmfile</summary>
 <br />
 
+Since we have already created Deployment and Service templates for microservices-helm-chart and helm-chart for Redis database, we will write bash script to install/deploy all the microservices to our Linode K8s cluster. You can find bash script here - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_5/install-services.sh .
+<br />
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_5$ ./install-services.sh 
+NAME: rediscart
+LAST DEPLOYED: Fri Mar 20 14:45:17 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NAME: adservice
+LAST DEPLOYED: Fri Mar 20 14:45:17 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NAME: cartservice
+LAST DEPLOYED: Fri Mar 20 14:45:19 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NAME: checkoutservice
+LAST DEPLOYED: Fri Mar 20 14:45:19 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NAME: currencyservice
+LAST DEPLOYED: Fri Mar 20 14:45:20 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+Error: INSTALLATION FAILED: cannot re-use a name that is still in use
+NAME: frontendservice
+LAST DEPLOYED: Fri Mar 20 14:45:21 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NAME: paymentservice
+LAST DEPLOYED: Fri Mar 20 14:45:22 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NAME: productcatalogservice
+LAST DEPLOYED: Fri Mar 20 14:45:22 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NAME: recommendationservice
+LAST DEPLOYED: Fri Mar 20 14:45:23 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NAME: shippingservice
+LAST DEPLOYED: Fri Mar 20 14:45:24 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
+As you can see I faced with issue regarding emailservice deployment since it was already deployed. So I had to uninstall it using "helm uninstall emailservice" command and after that email service and all other services were sucessfully installed:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10$ kubectl get svc
+NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)        AGE
+adservice               ClusterIP      10.128.180.35    <none>           9555/TCP       8h
+cartservice             ClusterIP      10.128.162.190   <none>           7070/TCP       8h
+checkoutservice         ClusterIP      10.128.255.235   <none>           5050/TCP       8h
+currencyservice         ClusterIP      10.128.244.230   <none>           7070/TCP       8h
+emailservice            ClusterIP      10.128.32.224    <none>           5000/TCP       8h
+frontend                LoadBalancer   10.128.41.19     143.42.221.158   80:31551/TCP   8h
+kubernetes              ClusterIP      10.128.0.1       <none>           443/TCP        34h
+paymentservice          ClusterIP      10.128.87.148    <none>           50051/TCP      8h
+productcatalogservice   ClusterIP      10.128.74.68     <none>           3550/TCP       8h
+recommendationservice   ClusterIP      10.128.254.224   <none>           8080/TCP       8h
+rediscart               ClusterIP      10.128.185.216   <none>           6379/TCP       8h
+shippingservice         ClusterIP      10.128.83.26     <none>           50051/TCP      8h
+armin@nb-pf565v12:~/twn-demo-projects/Module_10$ kubectl get deployment 
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
+adservice               2/2     2            2           8h
+cartservice             2/2     2            2           8h
+checkoutservice         2/2     2            2           8h
+currencyservice         2/2     2            2           8h
+emailservice            2/2     2            2           8h
+frontend                2/2     2            2           8h
+paymentservice          2/2     2            2           8h
+productcatalogservice   2/2     2            2           8h
+recommendationservice   2/2     2            2           8h
+rediscart               2/2     2            2           8h
+shippingservice         2/2     2            2           8h
+armin@nb-pf565v12:~/twn-demo-projects/Module_10$ kubectl get pods
+NAME                                     READY   STATUS    RESTARTS   AGE
+adservice-5f8b8889c9-8kj82               1/1     Running   0          8h
+adservice-5f8b8889c9-bzqkk               1/1     Running   0          8h
+cartservice-548cc667f7-ppdpq             1/1     Running   0          8h
+cartservice-548cc667f7-q9hnr             1/1     Running   0          8h
+checkoutservice-d5cdb7ffd-fg8sd          1/1     Running   0          8h
+checkoutservice-d5cdb7ffd-ftt8x          1/1     Running   0          8h
+currencyservice-dbb475f87-56f4f          1/1     Running   0          8h
+currencyservice-dbb475f87-dbxf7          1/1     Running   0          8h
+emailservice-778b6cfbdd-fksqm            1/1     Running   0          8h
+emailservice-778b6cfbdd-s58px            1/1     Running   0          8h
+frontend-7c9459ffb6-7zsm6                1/1     Running   0          8h
+frontend-7c9459ffb6-xdzq6                1/1     Running   0          8h
+paymentservice-85566bc778-hzrl2          1/1     Running   0          8h
+paymentservice-85566bc778-wdz8f          1/1     Running   0          8h
+productcatalogservice-549b86c956-52srf   1/1     Running   0          8h
+productcatalogservice-549b86c956-nw2h8   1/1     Running   0          8h
+recommendationservice-6b74f8cb9f-bwbt5   1/1     Running   0          8h
+recommendationservice-6b74f8cb9f-qm5sl   1/1     Running   0          8h
+rediscart-fb7747789-2x2bm                1/1     Running   0          8h
+rediscart-fb7747789-6h5db                1/1     Running   0          8h
+shippingservice-56c958dbf6-cjkjw         1/1     Running   0          8h
+shippingservice-56c958dbf6-t4cx4         1/1     Running   0          8h
+```
+
+In case we need to uninstall all the services we can use this shell script - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_5/uninstall-services.sh .
+<br />
+
+**Deploy Microservices with Helmfile**
+
+
 
 
 
