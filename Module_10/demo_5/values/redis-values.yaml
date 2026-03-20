@@ -1,2 +1,2 @@
-appName: redis-cart
+appName: rediscart
 appReplicas: 2
