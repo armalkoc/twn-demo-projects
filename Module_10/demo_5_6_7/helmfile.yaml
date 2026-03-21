@@ -12,7 +12,7 @@ releases:
     - values/ad-service-values.yaml
 
   - name: cartservice
-    chart: values/cart-service-values.yaml
+    chart: microservices-helm-chart
     values:
     - values/cart-service-values.yaml
 
