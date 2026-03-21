@@ -389,9 +389,9 @@ shippingservice         ClusterIP      10.128.26.133    <none>           50051/T
 <summary>Create Helm Chart for Microservices</summary>
 <br />
 
-First of all I created new helm chart for microservices called **microservices-helm-chart** . After that I deleted all the files from the template directory and create my own files, Deployment and Service configuration files. Since we have almost the same Deployment and Service configuration for all microservices, it mens we can use these files as a template files. To pass specific values for every single microservice,we'll create new dir called **values** and store all the custom values files for every single microservice there. You can have a look at this microservice chart here - https://github.com/armalkoc/twn-demo-projects/tree/master/Module_10/demo_5/microservices-helm-chart .
+First of all I created new helm chart for microservices called **microservices-helm-chart** . After that I deleted all the files from the template directory and create my own files, Deployment and Service configuration files. Since we have almost the same Deployment and Service configuration for all microservices, it mens we can use these files as a template files. To pass specific values for every single microservice,we'll create new dir called **values** and store all the custom values files for every single microservice there. You can have a look at this microservice chart here - https://github.com/armalkoc/twn-demo-projects/tree/master/Module_10/demo_5_6_7/microservices-helm-chart .
 
-I created helm-chart for Redis with values file as well - https://github.com/armalkoc/twn-demo-projects/tree/master/Module_10/demo_5/redis-chart .
+I created helm-chart for Redis with values file as well - https://github.com/armalkoc/twn-demo-projects/tree/master/Module_10/demo_5_6_7/redis-chart .
 <br />
 </details>
 
@@ -401,7 +401,7 @@ I created helm-chart for Redis with values file as well - https://github.com/arm
 <summary>Deploy Microservices with Helmfile</summary>
 <br />
 
-Since we have already created Deployment and Service templates for microservices-helm-chart and helm-chart for Redis database, we will write bash script to install/deploy all the microservices to our Linode K8s cluster. You can find bash script here - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_5/install-services.sh .
+Since we have already created Deployment and Service templates for microservices-helm-chart and helm-chart for Redis database, we will write bash script to install/deploy all the microservices to our Linode K8s cluster. You can find bash script here - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_5_6_7/install-services.sh .
 <br />
 ```sh
 armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_5$ ./install-services.sh 
@@ -523,10 +523,216 @@ shippingservice-56c958dbf6-cjkjw         1/1     Running   0          8h
 shippingservice-56c958dbf6-t4cx4         1/1     Running   0          8h
 ```
 
-In case we need to uninstall all the services we can use this shell script - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_5/uninstall-services.sh .
+In case we need to uninstall all the services we can use this shell script - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_5_6_7/uninstall-services.sh .
 <br />
 
 **Deploy Microservices with Helmfile**
+
+In this demo we'll deoloy all the microservices using helmfile. I wrote helmfile - https://github.com/armalkoc/twn-demo-projects/blob/master/Module_10/demo_5_6_7/helmfile.yaml .
+
+After that all the microservices were uninstalled using uninstall.sh script.
+Now we can install all the microservices using helmfile"
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_5_6_7$ helmfile sync
+Building dependency release=recommendationservice, chart=microservices-helm-chart
+Building dependency release=cartservice, chart=microservices-helm-chart
+Building dependency release=frontendservice, chart=microservices-helm-chart
+Building dependency release=productcatalogservice, chart=microservices-helm-chart
+Building dependency release=paymentservice, chart=microservices-helm-chart
+Building dependency release=checkoutservice, chart=microservices-helm-chart
+Building dependency release=rediscart, chart=redis-chart
+Building dependency release=shippingservice, chart=microservices-helm-chart
+Building dependency release=adservice, chart=microservices-helm-chart
+Building dependency release=emailservice, chart=microservices-helm-chart
+Building dependency release=currencyservice, chart=microservices-helm-chart
+Upgrading release=paymentservice, chart=microservices-helm-chart, namespace=
+Upgrading release=shippingservice, chart=microservices-helm-chart, namespace=
+Upgrading release=productcatalogservice, chart=microservices-helm-chart, namespace=
+Upgrading release=checkoutservice, chart=microservices-helm-chart, namespace=
+Upgrading release=recommendationservice, chart=microservices-helm-chart, namespace=
+Upgrading release=rediscart, chart=redis-chart, namespace=
+Upgrading release=cartservice, chart=microservices-helm-chart, namespace=
+Upgrading release=adservice, chart=microservices-helm-chart, namespace=
+Upgrading release=frontendservice, chart=microservices-helm-chart, namespace=
+Upgrading release=currencyservice, chart=microservices-helm-chart, namespace=
+Upgrading release=emailservice, chart=microservices-helm-chart, namespace=
+Release "cartservice" does not exist. Installing it now.
+NAME: cartservice
+LAST DEPLOYED: Sat Mar 21 18:07:23 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+
+Listing releases matching ^cartservice$
+cartservice     default         1               2026-03-21 18:07:23.406835434 +0100 CET deployed        microservices-helm-chart-0.1.0  1.16.0     
+
+Release "recommendationservice" has been upgraded. Happy Helming!
+NAME: recommendationservice
+LAST DEPLOYED: Sat Mar 21 18:07:23 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+
+Listing releases matching ^recommendationservice$
+Release "shippingservice" has been upgraded. Happy Helming!
+NAME: shippingservice
+LAST DEPLOYED: Sat Mar 21 18:07:23 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+
+Listing releases matching ^shippingservice$
+Release "checkoutservice" has been upgraded. Happy Helming!
+NAME: checkoutservice
+LAST DEPLOYED: Sat Mar 21 18:07:23 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+
+Listing releases matching ^checkoutservice$
+Release "rediscart" has been upgraded. Happy Helming!
+NAME: rediscart
+LAST DEPLOYED: Sat Mar 21 18:07:23 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+
+Listing releases matching ^rediscart$
+Release "paymentservice" has been upgraded. Happy Helming!
+NAME: paymentservice
+LAST DEPLOYED: Sat Mar 21 18:07:23 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+
+Listing releases matching ^paymentservice$
+Release "frontendservice" has been upgraded. Happy Helming!
+NAME: frontendservice
+LAST DEPLOYED: Sat Mar 21 18:07:23 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+
+Listing releases matching ^frontendservice$
+Release "adservice" has been upgraded. Happy Helming!
+NAME: adservice
+LAST DEPLOYED: Sat Mar 21 18:07:23 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+
+Listing releases matching ^adservice$
+Release "productcatalogservice" has been upgraded. Happy Helming!
+NAME: productcatalogservice
+LAST DEPLOYED: Sat Mar 21 18:07:23 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+
+Listing releases matching ^productcatalogservice$
+Release "currencyservice" has been upgraded. Happy Helming!
+NAME: currencyservice
+LAST DEPLOYED: Sat Mar 21 18:07:23 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+
+Listing releases matching ^currencyservice$
+Release "emailservice" has been upgraded. Happy Helming!
+NAME: emailservice
+LAST DEPLOYED: Sat Mar 21 18:07:23 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+
+Listing releases matching ^emailservice$
+shippingservice default         2               2026-03-21 18:07:23.408000987 +0100 CET deployed        microservices-helm-chart-0.1.0  1.16.0     
+
+rediscart       default         2               2026-03-21 18:07:23.407625129 +0100 CET deployed        redis-chart-0.1.0       1.16.0     
+
+paymentservice  default         2               2026-03-21 18:07:23.408057624 +0100 CET deployed        microservices-helm-chart-0.1.0  1.16.0     
+
+recommendationservice   default         2               2026-03-21 18:07:23.41482072 +0100 CET  deployed        microservices-helm-chart-0.1.0  1.16.0     
+
+checkoutservice default         2               2026-03-21 18:07:23.415651658 +0100 CET deployed        microservices-helm-chart-0.1.0  1.16.0     
+
+emailservice    default         2               2026-03-21 18:07:23.409237385 +0100 CET deployed        microservices-helm-chart-0.1.0  1.16.0     
+
+adservice       default         2               2026-03-21 18:07:23.415396674 +0100 CET deployed        microservices-helm-chart-0.1.0  1.16.0     
+
+frontendservice default         2               2026-03-21 18:07:23.409732387 +0100 CET deployed        microservices-helm-chart-0.1.0  1.16.0     
+
+productcatalogservice   default         2               2026-03-21 18:07:23.414717084 +0100 CET deployed        microservices-helm-chart-0.1.0  1.16.0     
+
+currencyservice default         2               2026-03-21 18:07:23.409262406 +0100 CET deployed        microservices-helm-chart-0.1.0  1.16.0     
+```
+Check Deployments, Services and Pods:
+```sh
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_5_6_7$ kubectl get deployments
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
+adservice               2/2     2            2           2m35s
+cartservice             2/2     2            2           6s
+checkoutservice         2/2     2            2           2m34s
+currencyservice         2/2     2            2           2m35s
+emailservice            2/2     2            2           2m35s
+frontend                2/2     2            2           2m35s
+paymentservice          2/2     2            2           2m35s
+productcatalogservice   2/2     2            2           2m35s
+recommendationservice   2/2     2            2           2m35s
+rediscart               1/1     1            1           2m35s
+shippingservice         2/2     2            2           2m35s
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_5_6_7$ kubectl get svc
+NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)        AGE
+adservice               ClusterIP      10.128.23.254    <none>           9555/TCP       2m40s
+cartservice             ClusterIP      10.128.102.23    <none>           7070/TCP       11s
+checkoutservice         ClusterIP      10.128.93.4      <none>           5050/TCP       2m40s
+currencyservice         ClusterIP      10.128.167.134   <none>           7070/TCP       2m40s
+emailservice            ClusterIP      10.128.143.243   <none>           5000/TCP       2m40s
+frontend                LoadBalancer   10.128.90.121    143.42.221.158   80:30175/TCP   2m40s
+kubernetes              ClusterIP      10.128.0.1       <none>           443/TCP        2d4h
+paymentservice          ClusterIP      10.128.27.123    <none>           50051/TCP      2m40s
+productcatalogservice   ClusterIP      10.128.68.139    <none>           3550/TCP       2m40s
+recommendationservice   ClusterIP      10.128.30.111    <none>           8080/TCP       2m40s
+rediscart               ClusterIP      10.128.232.243   <none>           6379/TCP       2m40s
+shippingservice         ClusterIP      10.128.1.101     <none>           50051/TCP      2m40s
+armin@nb-pf565v12:~/twn-demo-projects/Module_10/demo_5_6_7$ kubectl get pods
+NAME                                     READY   STATUS    RESTARTS   AGE
+adservice-5f8b8889c9-q6qll               1/1     Running   0          2m41s
+adservice-5f8b8889c9-qslpb               1/1     Running   0          2m41s
+cartservice-548cc667f7-5vdc7             1/1     Running   0          14s
+cartservice-548cc667f7-pcwv8             1/1     Running   0          14s
+checkoutservice-d5cdb7ffd-5zq5q          1/1     Running   0          2m40s
+checkoutservice-d5cdb7ffd-k656c          1/1     Running   0          2m40s
+currencyservice-dbb475f87-jt4ms          1/1     Running   0          2m42s
+currencyservice-dbb475f87-rg977          1/1     Running   0          2m42s
+emailservice-778b6cfbdd-tjkff            1/1     Running   0          2m42s
+emailservice-778b6cfbdd-x6vg7            1/1     Running   0          2m42s
+frontend-7c9459ffb6-77qks                1/1     Running   0          2m41s
+frontend-7c9459ffb6-fhnrl                1/1     Running   0          2m41s
+paymentservice-85566bc778-7g7d4          1/1     Running   0          2m42s
+paymentservice-85566bc778-tf9fg          1/1     Running   0          2m41s
+productcatalogservice-549b86c956-gvsql   1/1     Running   0          2m42s
+productcatalogservice-549b86c956-wbg45   1/1     Running   0          2m42s
+recommendationservice-6b74f8cb9f-b2hlc   1/1     Running   0          2m41s
+recommendationservice-6b74f8cb9f-jrc6w   1/1     Running   0          2m41s
+rediscart-85bf5fcd9-4xzrg                1/1     Running   0          2m42s
+shippingservice-56c958dbf6-45tz8         1/1     Running   0          2m42s
+shippingservice-56c958dbf6-m4b2c         1/1     Running   0          2m42s
+```
+At the end our microservices application has sucessfully been deployed to the Linode K8s cluster.
+<br />
+</details>
 
 
 
